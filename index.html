@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langkah Pendaki | Premium Outdoor Rental</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="public/assets/css/global.css">
+<link rel="stylesheet" href="public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] text-[#2C3639] antialiased overflow-x-hidden opacity-100 transition-opacity duration-300">
+
+    <!-- LANGKAH 11: PREMIUM PAGE TRANSITION PROGRESS INDICATOR & OVERLAY -->
+    <div id="pageTransitionProgressBar" class="fixed top-0 left-0 h-0.5 bg-gradient-to-r from-[#D4A017] to-green-500 z-[99999] w-0 transition-all duration-300 ease-out"></div>
+    <div id="pageTransitionCurtain" class="fixed inset-0 bg-[#F7F8F5] z-[9999] opacity-0 pointer-events-none transition-opacity duration-500 ease-in-out"></div>
+
+    <!-- Navigasi Utama Pintar -->
+    <nav id="smartNavbar" class="fixed top-0 inset-x-0 z-50 bg-[#355E3B] md:bg-transparent text-white py-4 px-8 md:px-12 flex justify-between items-center transition-all duration-300 shadow-lg md:shadow-none">
+        <div class="flex items-center space-x-3 cursor-pointer group" onclick="window.smoothScrollTo ? window.smoothScrollTo('body') : null">
+            <span class="text-2xl animate-pulse">🌿</span>
+            <span class="font-serif text-xl font-bold tracking-wide relative">
+                Langkah<span class="text-[#D4A017]">Pendaki</span>
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4A017] transition-all duration-300 group-hover:w-full"></span>
+            </span>
+        </div>
+
+        <div class="flex items-center space-x-4">
+        <a href="login.html" class="text-sm font-medium text-stone-200 hover:text-white transition-colors duration-200">Masuk</a>
+        <a href="register.html" class="bg-[#D4A017] text-stone-900 px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-yellow-500 transition-all duration-200 transform active:scale-95">Daftar</a>
+        </div>
+    </nav>
+
+    <!-- Parallax Hero Banner Section -->
+    <section class="relative h-[85vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-stone-950 w-full">
+        <div id="heroParallaxBg" class="absolute inset-0 transition-transform duration-100 ease-out scale-105 z-0">
+            <div class="w-full h-full" style="background: linear-gradient(135deg, rgba(42, 74, 47, 0.85), rgba(53, 94, 59, 0.85)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; background-attachment: fixed;"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#F7F8F5]"></div>
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto text-white flex flex-col items-center justify-center w-full">
+            <h1 class="font-serif text-4xl md:text-6xl font-bold mb-3 drop-shadow-md leading-tight">
+                Setiap Langkah Lebih Siap Jelajah <br>
+                <span id="dynamicHeroText" class="inline-block text-[#D4A017] transition-all duration-500 opacity-100 blur-0 transform translate-y-0 mt-2">Gunung 🏔️</span>
+            </h1>
+            
+            <p class="text-xs md:text-sm text-green-400 font-bold uppercase tracking-widest mb-6">Premium Outdoor Gear Service</p>
+            
+            <a href="catalog.html" class="bg-[#355E3B] text-white px-8 py-3 rounded-xl font-bold text-xs tracking-wide shadow-xl hover:bg-[#2c4d31] transition-all duration-200 inline-block transform hover:-translate-y-0.5 active:scale-95 mb-8">
+                Eksplor Seri Alat Sekarang <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+            </a>
+
+            <!-- PANEL LIVE STATISTICS GRID -->
+            <div class="w-full max-w-3xl grid grid-cols-5 gap-2 bg-black/30 backdrop-blur-md p-3.5 rounded-xl border border-white/10 text-white shadow-2xl">
+                <div class="text-center">
+                    <span class="block text-base md:text-lg font-bold text-[#D4A017]" id="stat-rating">4.9</span>
+                    <small class="text-[9px] text-stone-300 font-bold uppercase tracking-wider block mt-0.5">⭐ Rating</small>
+                </div>
+                <div class="text-center border-l border-white/10">
+                    <span class="block text-base md:text-lg font-bold text-white" id="stat-renters">0</span>
+                    <small class="text-[9px] text-stone-300 font-bold uppercase tracking-wider block mt-0.5">👥 Penyewa</small>
+                </div>
+                <div class="text-center border-l border-white/10">
+                    <span class="block text-base md:text-lg font-bold text-white" id="stat-trips">0</span>
+                    <small class="text-[9px] text-stone-300 font-bold uppercase tracking-wider block mt-0.5">🏕️ Total Trip</small>
+                </div>
+                <div class="text-center border-l border-white/10">
+                    <span class="block text-base md:text-lg font-bold text-white" id="stat-available">0</span>
+                    <small class="text-[9px] text-stone-300 font-bold uppercase tracking-wider block mt-0.5">📦 Tersedia</small>
+                </div>
+                <div class="text-center border-l border-white/10">
+                    <span class="block text-base md:text-lg font-bold text-green-400" id="stat-today">0</span>
+                    <small class="text-[9px] text-green-300 font-bold uppercase tracking-wider block mt-0.5">🔥 Hari Ini</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WRAPPER REVEAL SEKSI 3 -->
+    <div class="opacity-0 translate-y-8 transition-all duration-700 ease-out scroll-reveal w-full">
+        <!-- SECTION 3: KATALOG UTAMA PRODUK PILIHAN -->
+        <section class="max-w-7xl mx-auto px-6 py-24" id="catalogSection">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl font-bold text-stone-900 mb-2">Perlengkapan Pilihan Terbaik</h2>
+                <p class="text-stone-500 text-xs">Aset terproteksi kaidah tangguh berstandar ekspedisi internasional.</p>
+            </div>
+            
+            <div id="catalogProductGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white p-4 rounded-2xl border border-stone-100 space-y-4 skeleton-shimmer-container">
+                    <div class="skeleton-shimmer aspect-square rounded-xl w-full h-48"></div>
+                    <div class="h-4 skeleton-shimmer rounded w-2/3 mx-auto"></div>
+                    <div class="h-3 skeleton-shimmer rounded w-1/3 mx-auto"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-100 space-y-4 skeleton-shimmer-container">
+                    <div class="skeleton-shimmer aspect-square rounded-xl w-full h-48"></div>
+                    <div class="h-4 skeleton-shimmer rounded w-2/3 mx-auto"></div>
+                    <div class="h-3 skeleton-shimmer rounded w-1/3 mx-auto"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-100 space-y-4 skeleton-shimmer-container">
+                    <div class="skeleton-shimmer aspect-square rounded-xl w-full h-48"></div>
+                    <div class="h-4 skeleton-shimmer rounded w-2/3 mx-auto"></div>
+                    <div class="h-3 skeleton-shimmer rounded w-1/3 mx-auto"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-100 space-y-4 skeleton-shimmer-container">
+                    <div class="skeleton-shimmer aspect-square rounded-xl w-full h-48"></div>
+                    <div class="h-4 skeleton-shimmer rounded w-2/3 mx-auto"></div>
+                    <div class="h-3 skeleton-shimmer rounded w-1/3 mx-auto"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FLOATING WRAPPER ANIMASI UNTUK MENJAGA STABILITAS LAYOUT -->
+    <div class="opacity-0 translate-y-8 transition-all duration-700 ease-out scroll-reveal w-full">
+        <!-- SECTION 1: VALUE PROPOSITION & TIMELINE -->
+        <section class="max-w-7xl mx-auto px-6 py-16 border-b border-stone-100" id="featuresTimelineSection">
+            <div class="text-center mb-12">
+                <h2 class="font-serif text-2xl md:text-3xl font-bold text-stone-900 mb-2">Standar Layanan Ekspedisi Tangguh</h2>
+                <p class="text-stone-500 text-xs">Mengapa ribuan pendaki mempercayakan manajemen logistik outdoor mereka kepada kami.</p>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-16">
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#355E3B] flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-sparkles"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">Alat Steril & Terawat</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Setiap tenda dan gear melewati 3 tahap pencucian antiseptik dan inspeksi kelayakan pasca-sewa.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-bolt"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">Booking Cepat Instan</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Sistem validasi berkas dan ketersediaan kuantitas stok terintegrasi real-time tanpa antre manual.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">Harga Transparan Jujur</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Tidak ada biaya siluman. Seluruh perhitungan tarif sewa dan nominal denda berjalan transparan.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-headset"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">Ranger Support 24/7</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Butuh konsultasi jalur pendakian atau kendala set-up alat di lapangan? Tim kami siap sedia membantu.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-stone-100 text-stone-700 flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-qrcode"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">QR Asset Tracking</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Setiap unit fisik memiliki kode identitas unik guna memastikan barang yang Anda terima lolos uji QC.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-sm mb-3 group-hover:scale-110 transition-transform"><i class="fa-solid fa-shield-heart"></i></div>
+                    <h4 class="font-serif text-xs md:text-sm font-bold text-stone-900 mb-1">Quality Checked Guaranteed</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Jaminan proteksi kelayakan frame tenda kokoh dan zipper tas anti-macet demi keselamatan di atas awan.</p>
+                </div>
+            </div>
+
+            <div class="text-center mb-10">
+                <h3 class="font-serif text-sm font-bold text-stone-400 uppercase tracking-widest">5 Langkah Mudah Memulai Perjalanan</h3>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+                <div class="bg-stone-50 border border-stone-200/60 p-4 rounded-xl text-center relative flex flex-col justify-between items-center group hover:bg-white transition-colors duration-200">
+                    <span class="w-6 h-6 rounded-full bg-[#355E3B] text-white flex items-center justify-center font-bold text-[10px] mb-2 shadow">1</span>
+                    <h5 class="font-bold text-stone-900 text-xs mb-1">Secure Booking</h5>
+                    <p class="text-[10px] text-stone-400">Pilih alat, tanggal pendakian, & unggah berkas KTP.</p>
+                </div>
+                <div class="bg-stone-50 border border-stone-200/60 p-4 rounded-xl text-center relative flex flex-col justify-between items-center group hover:bg-white transition-colors duration-200">
+                    <span class="w-6 h-6 rounded-full bg-[#355E3B] text-white flex items-center justify-center font-bold text-[10px] mb-2 shadow">2</span>
+                    <h5 class="font-bold text-stone-900 text-xs mb-1">Instant Payment</h5>
+                    <p class="text-[10px] text-stone-400">Bayar via e-wallet/VA, otomatis diverifikasi sistem.</p>
+                </div>
+                <div class="bg-stone-50 border border-stone-200/60 p-4 rounded-xl text-center relative flex flex-col justify-between items-center group hover:bg-white transition-colors duration-200">
+                    <span class="w-6 h-6 rounded-full bg-[#355E3B] text-white flex items-center justify-center font-bold text-[10px] mb-2 shadow">3</span>
+                    <h5 class="font-bold text-stone-900 text-xs mb-1">Scan Check-Out</h5>
+                    <p class="text-[10px] text-stone-400">Datang ke basecamp, lakukan scan QR code alat fisik.</p>
+                </div>
+                <div class="bg-stone-50 border border-stone-200/60 p-4 rounded-xl text-center relative flex flex-col justify-between items-center group hover:bg-white transition-colors duration-200">
+                    <span class="w-6 h-6 rounded-full bg-[#355E3B] text-white flex items-center justify-center font-bold text-[10px] mb-2 shadow">4</span>
+                    <h5 class="font-bold text-stone-900 text-xs mb-1">Explore Nature</h5>
+                    <p class="text-[10px] text-stone-400">Nikmati petualangan dengan proteksi gear premium.</p>
+                </div>
+                <div class="bg-stone-50 border border-stone-200/60 p-4 rounded-xl text-center relative flex flex-col justify-between items-center col-span-2 md:col-span-1 group hover:bg-white transition-colors duration-200">
+                    <span class="w-6 h-6 rounded-full bg-gradient-to-tr from-yellow-600 to-[#D4A017] text-stone-950 flex items-center justify-center font-bold text-[10px] mb-2 shadow">5</span>
+                    <h5 class="font-bold text-stone-900 text-xs mb-1">Scan Check-In</h5>
+                    <p class="text-[10px] text-stone-400">Kembalikan unit, scan ulang QR code, & transaksi selesai.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- WRAPPER REVEAL SEKSI 2 -->
+    <div class="opacity-0 translate-y-8 transition-all duration-700 ease-out scroll-reveal w-full">
+        <!-- SECTION 2: DYNAMIC TESTIMONIAL CARD SECTOR -->
+        <section class="max-w-7xl mx-auto px-6 py-16 border-b border-stone-100 overflow-hidden" id="testimonialSection">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-2xl md:text-3xl font-bold text-stone-900 mb-2">Suara Para Penjelajah</h2>
+                <p class="text-stone-500 text-xs">Ulasan murni dari para pendaki tangguh yang telah menembus batas cakrawala bersama kami.</p>
+            </div>
+
+            <div class="relative w-full overflow-hidden px-2 py-4">
+                <div id="testimonialSliderTrack" class="flex space-x-6 transition-transform duration-500 ease-out w-max" onmouseenter="freezeTestimonialSlider()" onmouseleave="resumeTestimonialSlider()">
+                    
+                    <!-- Shimmer Loader Initial Placeholder Content -->
+                    <div class="bg-white p-5 rounded-xl border border-stone-100 w-80 space-y-4 shadow-sm flex-shrink-0 testimonial-skeleton">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-stone-200 rounded-full skeleton-shimmer"></div>
+                            <div class="space-y-2 flex-1">
+                                <div class="h-3 bg-stone-200 rounded w-2/3 skeleton-shimmer"></div>
+                                <div class="h-2 bg-stone-100 rounded w-1/3 skeleton-shimmer"></div>
+                            </div>
+                        </div>
+                        <div class="h-3 bg-stone-100 rounded w-full skeleton-shimmer"></div>
+                        <div class="h-3 bg-stone-100 rounded w-5/6 skeleton-shimmer"></div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-xl border border-stone-100 w-80 space-y-4 shadow-sm flex-shrink-0 testimonial-skeleton">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-stone-200 rounded-full skeleton-shimmer"></div>
+                            <div class="space-y-2 flex-1">
+                                <div class="h-3 bg-stone-200 rounded w-2/3 skeleton-shimmer"></div>
+                                <div class="h-2 bg-stone-100 rounded w-1/3 skeleton-shimmer"></div>
+                            </div>
+                        </div>
+                        <div class="h-3 bg-stone-100 rounded w-full skeleton-shimmer"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Floating Action Button Contextual (Scroll To Top) -->
+    <button id="btnScrollToTop" onclick="window.smoothScrollTo ? window.smoothScrollTo('body') : null" class="fixed bottom-6 right-6 w-12 h-12 bg-[#355E3B] text-white rounded-full shadow-2xl flex items-center justify-center opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 hover:bg-[#2c4d31]">
+        <i class="fa-solid fa-chevron-up"></i>
+    </button>
+
+    <!-- FOOTER: PREMIUM INFORMATION CENTER COMPONENT -->
+    <footer class="bg-[#2C3639] text-white pt-16 pb-6 px-6 md:px-12 border-t border-stone-800 text-xs w-full">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3 text-sm font-bold font-serif tracking-wide">
+                    <span>🌿</span><span>Langkah<span class="text-[#D4A017]">Pendaki</span></span>
+                </div>
+                <p class="text-stone-400 leading-relaxed font-medium">
+                    Pusat ekosistem layanan persewaan perlengkapan outdoor premium terproteksi kaidah tangguh berstandar ekspedisi internasional di Indonesia.
+                </p>
+                <div class="pt-2 grid grid-cols-3 gap-2 border-t border-stone-800 text-[10px] font-bold text-stone-400">
+                    <div><span class="block text-white text-xs font-serif" id="f-metric-renters">340+</span>Penyewa</div>
+                    <div><span class="block text-white text-xs font-serif" id="f-metric-products">12+</span>Seri Alat</div>
+                    <div><span class="block text-white text-xs font-serif" id="f-metric-reviews">4.9</span>★ Review</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-3">
+                    <h5 class="font-serif font-bold text-stone-300 uppercase text-[10px] tracking-wider">Toko Kami</h5>
+                    <ul class="space-y-2 font-medium text-stone-400">
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Eksplor Katalog</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Panduan Sewa</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">SOP Sterilisasi</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Aturan Denda</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h5 class="font-serif font-bold text-stone-300 uppercase text-[10px] tracking-wider">Kategori</h5>
+                    <ul class="space-y-2 font-medium text-stone-400">
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Tenda Dome</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Carrier Pack</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Cooking Gear</a></li>
+                        <li><a href="#" class="hover:text-[#D4A017] transition-colors">Apparel</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h5 class="font-serif font-bold text-stone-300 uppercase text-[10px] tracking-wider">Jam Operasional Basecamp</h5>
+                <p class="text-stone-400 font-medium leading-relaxed">
+                    Setiap Hari: <span class="text-white font-semibold">07:00 - 22:00 WIB</span><br>
+                    Pengembalian Unit Maksimal pukul <span class="text-amber-500 font-semibold">21:00 WIB</span> untuk proses validasi QR Code QC harian.
+                </p>
+                <div class="pt-1 text-stone-400 font-medium">
+                    <i class="fa-solid fa-location-dot mr-1.5 text-[#D4A017]"></i> Bogor, Jawa Barat, Indonesia.
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h5 class="font-serif font-bold text-stone-300 uppercase text-[10px] tracking-wider">Ranger Newsletter</h5>
+                <p class="text-stone-400 font-medium leading-relaxed mb-2">Dapatkan info kupon diskon sewa dan kuota pendakian gunung.</p>
+                <div class="flex">
+                    <input type="email" placeholder="Email Anda..." class="w-full px-3 py-2 bg-stone-800/80 border border-stone-700 rounded-l-lg outline-none text-white focus:border-green-600 transition text-[11px]">
+                    <button onclick="alert('Terima kasih telah berlangganan newsletter!')" class="bg-[#355E3B] hover:bg-green-800 px-3 rounded-r-lg font-bold transition transform active:scale-95"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+                <div class="flex space-x-3 pt-2 text-stone-400 text-sm">
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto border-t border-stone-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-stone-500 font-semibold text-[11px] gap-3">
+            <div>&copy; <span id="dynamicCopyrightYear">2026</span> Langkah Pendaki Service Network. All Rights Reserved.</div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:underline">Privacy Policy</a>
+                <a href="#" class="hover:underline">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="public/assets/js/user-core.js" type="module"></script>
+<script src="public/assets/js/landing-interactive.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selesaikan Pembayaran Premium | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../public/assets/css/global.css">
+    <link rel="stylesheet" href="../../public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] text-[#2C3639] antialiased min-h-screen flex flex-col justify-between">
+
+    <div id="headerNavbarContainer" class="mb-20"></div>
+
+    <main class="max-w-5xl mx-auto w-full px-6 py-10 flex-1 fade-in-up">
+        
+        <div class="max-w-xl mx-auto mb-12">
+            <div class="flex items-center justify-between relative">
+                <div class="absolute left-0 top-1/2 w-full h-0.5 bg-stone-200 -translate-y-1/2 z-0"></div>
+                <div id="progressLine" class="absolute left-0 top-1/2 w-1/2 h-0.5 bg-green-700 -translate-y-1/2 z-0 transition-all duration-500"></div>
+                
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full bg-green-700 text-white flex items-center justify-center text-xs font-bold shadow-md">1</div>
+                    <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider mt-2">Keranjang</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full bg-green-700 text-white flex items-center justify-center text-xs font-bold ring-4 ring-green-100 shadow-md animate-pulse">2</div>
+                    <span class="text-[10px] font-bold text-stone-900 uppercase tracking-wider mt-2">Pembayaran</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center text-xs font-bold shadow-inner">3</div>
+                    <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mt-2">Konfirmasi</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 text-left border-b border-stone-200 pb-4">
+            <h2 class="font-serif text-3xl font-bold text-stone-900 tracking-tight flex items-center">
+                <span class="mr-3 text-2xl">💳</span> Pilih Metode Pembayaran
+            </h2>
+            <p class="text-xs text-stone-400 mt-1">Gunakan opsi pembayaran instan otomatis atau transfer manual terverifikasi basis data MySQL.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="paymentOptionsGrid">
+                    <div onclick="selectPay('E-Wallet', this)" class="bg-white p-5 rounded-2xl border border-stone-200 cursor-pointer transition-all duration-300 hover:shadow-md hover:border-green-600 flex flex-col items-center justify-center text-center group active:scale-[0.98]">
+                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">📱</div>
+                        <h4 class="font-bold text-sm text-stone-800">Dompet Digital</h4>
+                        <p class="text-[11px] text-stone-400 mt-1">OVO, DANA, GoPay</p>
+                    </div>
+
+                    <div onclick="selectPay('Transfer Bank', this)" class="bg-white p-5 rounded-2xl border border-stone-200 cursor-pointer transition-all duration-300 hover:shadow-md hover:border-green-600 flex flex-col items-center justify-center text-center group active:scale-[0.98]">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">🏦</div>
+                        <h4 class="font-bold text-sm text-stone-800">Transfer Bank</h4>
+                        <p class="text-[11px] text-stone-400 mt-1">Virtual Account BCA, Mandiri</p>
+                    </div>
+
+                    <div onclick="selectPay('QRIS', this)" class="bg-white p-5 rounded-2xl border border-stone-200 cursor-pointer transition-all duration-300 hover:shadow-md hover:border-green-600 flex flex-col items-center justify-center text-center group active:scale-[0.98]">
+                        <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">📸</div>
+                        <h4 class="font-bold text-sm text-stone-800">Scan QRIS</h4>
+                        <p class="text-[11px] text-stone-400 mt-1">QR Kode Standard Indonesia</p>
+                    </div>
+                </div>
+
+                <div id="paymentInfoCard" class="bg-white p-6 rounded-2xl border border-stone-100 shadow-md hidden opacity-0 translate-y-2 transition-all duration-300">
+                    <h4 class="font-bold text-xs text-stone-400 uppercase tracking-wider mb-3">📋 Instruksi Prosedur Transaksi</h4>
+                    <p id="paymentInfo" class="text-sm text-stone-800 leading-relaxed font-semibold"></p>
+                    
+                    <div class="mt-6 pt-6 border-t border-stone-100 hidden" id="uploadEvidenceZone">
+                        <label for="proofInput" class="flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-2xl p-6 cursor-pointer hover:border-green-700 hover:bg-stone-50/50 transition-all duration-300 text-center group">
+                            <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">📤</span>
+                            <span class="text-xs font-bold text-stone-700">Unggah Berkas Bukti Transfer</span>
+                            <span class="text-[10px] text-stone-400 mt-1">Klik untuk menelusuri file foto gambar struk VA</span>
+                            <input type="file" id="proofInput" accept="image/*" class="hidden">
+                        </label>
+                        <div id="proofPreviewArea" class="mt-4 hidden text-center animate-pulse">
+                            <img id="proofPreview" src="" class="max-h-48 mx-auto rounded-xl border object-cover shadow-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-xl">
+                    <h4 class="font-bold text-stone-800 text-sm mb-4">Ringkasan Tagihan Final</h4>
+                    
+                    <div class="flex justify-between text-xs text-stone-400 border-b pb-3 mb-3">
+                        <span>Estimasi Harga Sewa Alat</span>
+                        <span id="subtotalDisplay">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-stone-400 border-b pb-3 mb-3">
+                        <span>Biaya Logistik & Ongkir</span>
+                        <span>Rp 0</span>
+                    </div>
+                    
+                    <div class="pt-2 mb-6">
+                        <small class="text-stone-400 text-[11px] block">Total Kewajiban Pembayaran:</small>
+                        <div id="grandTotalDisplay" class="text-3xl font-bold text-[#355E3B]">Rp 0</div>
+                    </div>
+
+                    <button onclick="executeConfirmPaymentOrder()" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5 active:scale-[0.97]">Konfirmasi Selesai Bayar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastNotificationContainer"></div>
+
+    <div id="footerContainer"></div>
+
+    <script type="module">
+        import { formatIDR, generateInvoiceNumber } from '../../public/assets/js/helpers/formatter.js';
+
+        // --- SINKRONISASI HITUNG TOTAL HARGA AWAL ---
+        function initializePaymentSummary() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const total = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+            
+            document.getElementById("subtotalDisplay").textContent = formatIDR(total);
+            document.getElementById("grandTotalDisplay").textContent = formatIDR(total);
+        }
+
+        // --- FITUR SELECTION METODE BAYAR (Substitusi selectPay lama) ---
+        window.selectPay = function(type, element) {
+            // Reset status active border kartu lain
+            const allCards = document.querySelectorAll("#paymentOptionsGrid > div");
+            allCards.forEach(c => c.classList.remove("border-green-600", "ring-2", "ring-green-100", "bg-stone-50/30"));
+
+            // Tambahkan status active pada kartu terpilih
+            element.classList.add("border-green-600", "ring-2", "ring-green-100", "bg-stone-50/30");
+
+            let msg = "";
+            const evidenceZone = document.getElementById("uploadEvidenceZone");
+
+            if (type === "E-Wallet") {
+                msg = "Silakan lakukan transfer dana e-wallet ke Nomor OVO/DANA/GoPay Langkah Pendaki: <span class='text-purple-700 font-mono font-bold block text-lg my-1'>081234567890</span>";
+                evidenceZone.classList.add("hidden");
+            } else if (type === "Transfer Bank") {
+                msg = "Silakan transfer manual ke rekening Virtual Account (VA) Bank BCA resmi Langkah Pendaki: <span class='text-blue-700 font-mono font-bold block text-lg my-1'>8800 1122 3344</span>";
+                // Tampilkan drop-zone upload berkas khusus jika memilih transfer bank (MySQL compliance)
+                evidenceZone.classList.remove("hidden");
+            } else if (type === "QRIS") {
+                msg = "Scan Kode QRIS di bawah ini menggunakan aplikasi perbankan atau dompet digital Anda untuk melakukan pembayaran instan.";
+                evidenceZone.classList.add("hidden");
+            }
+
+            // Tampilkan info dengan animasi apung fade-in yang halus (Visi 2026)
+            const infoCard = document.getElementById("paymentInfoCard");
+            document.getElementById("paymentInfo").innerHTML = msg;
+            
+            infoCard.classList.remove("hidden");
+            setTimeout(() => {
+                infoCard.classList.remove("opacity-0", "translate-y-2");
+            }, 15);
+
+            // Simpan rancangan sementara transaksi ke localStorage sebelum di-push ke orders MySQL
+            const transactionDraft = {
+                id: Date.now(),
+                method: type,
+                status: "Menunggu Verifikasi",
+                amount: calculateTotalAmount()
+            };
+            localStorage.setItem("transaction", JSON.stringify(transactionDraft));
+        };
+
+        function calculateTotalAmount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            return cart.reduce((t, item) => t + item.price * item.qty, 0);
+        }
+
+        // --- LISTENER PREVIEW BUKTI UPLOAD FILE ---
+        document.getElementById("proofInput")?.addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById("proofPreview").src = event.target.result;
+                    document.getElementById("proofPreviewArea").classList.remove("hidden");
+                    
+                    // Update state base64 bukti ke skrip transaksi draft sementara
+                    let draft = JSON.parse(localStorage.getItem("transaction")) || {};
+                    draft.proof = event.target.result;
+                    localStorage.setItem("transaction", JSON.stringify(draft));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- EXECUTE FINAL INVOICE ORDER CONFIRMATION ---
+        window.executeConfirmPaymentOrder = function() {
+            const draft = localStorage.getItem("transaction");
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const returnDate = localStorage.getItem("selectedReturnDate");
+
+            if (!draft) return alert("Silakan pilih salah satu opsi metode pembayaran terlebih dahulu!");
+            if (cart.length === 0) return alert("Keranjang belanja kosong!");
+
+            const parsedDraft = JSON.parse(draft);
+            
+            // Kompilasi data struktur penuh pesanan siap injeksi ke tabel orders MySQL kelak
+            const finalOrderPayload = {
+                id: parsedDraft.id,
+                invoice_number: generateInvoiceNumber(),
+                user: localStorage.getItem("loggedInUser") || "Customer",
+                amount: parsedDraft.amount,
+                status: "Menunggu Verifikasi",
+                proof: parsedDraft.proof || null,
+                date: new Date().toLocaleString('id-ID'),
+                expectedReturnDate: returnDate,
+                items: cart
+            };
+
+            // Simpan ke riwayat global (Global History State)
+            let history = JSON.parse(localStorage.getItem("userHistory")) || [];
+            history.push(finalOrderPayload);
+            localStorage.setItem("userHistory", JSON.stringify(history));
+            localStorage.setItem("currentTransaction", JSON.stringify(finalOrderPayload));
+
+            // Geser progress bar indicator ke step 3 (Konfirmasi Berhasil)
+            document.getElementById("progressLine").style.width = "100%";
+
+            alert(`Transaksi Berhasil Dikirim! Nomor Invoice Anda: ${finalOrderPayload.invoice_number}. Mohon tunggu verifikasi oleh admin.`);
+            
+            // Kosongkan keranjang belanja setelah checkout sukses (Cart Flushing)
+            localStorage.removeItem("cart");
+            
+            // Alihkan halaman ke dashboard histori akun utama secara halus
+            window.location.href = "dashboard.html";
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initializePaymentSummary();
+        });
+    </script>
+</body>
+</html>

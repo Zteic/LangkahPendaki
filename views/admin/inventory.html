@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaris Perlengkapan | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../public/assets/css/global.css">
+    <link rel="stylesheet" href="../../public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] text-[#2C3639] antialiased min-h-screen flex flex-col justify-between">
+
+    <div id="navProgressIndicator" class="fixed top-0 left-0 h-1 bg-green-600 w-0 z-[9999] transition-all duration-300 ease-out"></div>
+
+    <div id="headerNavbarContainer" class="mb-20"></div>
+
+    <main class="max-w-6xl mx-auto w-full px-6 py-10 flex-1 fade-in-up">
+        
+        <div class="mb-8 text-left border-b border-stone-200 pb-4 flex justify-between items-end flex-wrap gap-4">
+            <div>
+                <h2 class="font-serif text-3xl font-bold text-stone-900 tracking-tight flex items-center">
+                    <span class="mr-3 text-2xl">📋</span> Daftar Inventaris Alat
+                </h2>
+                <p class="text-xs text-stone-400 mt-1">Status ketersediaan logistik unit perlengkapan mendaki gunung terintegrasi live database MySQL.</p>
+            </div>
+            
+            <div class="category-tabs flex space-x-1 bg-stone-200/60 p-1 rounded-xl text-xs" id="userInventoryTabs">
+                <button class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all duration-200" data-filter="Semua">Semua</button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-bold transition-all duration-200" data-filter="Tenda">Tenda</button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-bold transition-all duration-200" data-filter="Carrier">Carrier</button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-bold transition-all duration-200" data-filter="Gear">Gear</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-stone-100 shadow-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-stone-50 border-b border-stone-200 text-stone-500 text-xs font-bold uppercase tracking-wider">
+                            <th class="p-4 pl-6 w-24">Visual</th>
+                            <th class="p-4 w-32">Kategori</th>
+                            <th class="p-4">Nama Barang</th>
+                            <th class="p-4 w-40">Harga Sewa</th>
+                            <th class="p-4 w-32">Stok Unit</th>
+                            <th class="p-4 text-center pr-6 w-28">Aksi</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody id="itemList" class="divide-y divide-stone-100 text-sm">
+                        
+                        <tr class="skeleton-row-container">
+                            <td class="p-4 pl-6"><div class="w-12 h-12 rounded-xl skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-16 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-5 w-56 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-24 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-12 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4 pr-6 text-center"><div class="h-9 w-9 mx-auto rounded-xl skeleton-shimmer"></div></td>
+                        </tr>
+                        <tr class="skeleton-row-container">
+                            <td class="p-4 pl-6"><div class="w-12 h-12 rounded-xl skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-16 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-5 w-48 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-24 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4"><div class="h-4 w-12 rounded skeleton-shimmer"></div></td>
+                            <td class="p-4 pr-6 text-center"><div class="h-9 w-9 mx-auto rounded-xl skeleton-shimmer"></div></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastNotificationContainer"></div>
+
+    <div id="footerContainer"></div>
+
+    <script src="../../public/assets/js/user-core.js" type="module"></script>
+</body>
+</html>

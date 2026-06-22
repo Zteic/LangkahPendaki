@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja Premium | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../public/assets/css/global.css">
+    <link rel="stylesheet" href="../../public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] text-[#2C3639] antialiased min-h-screen flex flex-col justify-between">
+
+    <div id="headerNavbarContainer" class="mb-20"></div>
+
+    <main class="max-w-4xl mx-auto w-full px-6 py-10 flex-1 fade-in-up">
+        
+        <div class="mb-8 text-left border-b border-stone-200 pb-4 flex justify-between items-end">
+            <div>
+                <h2 class="font-serif text-3xl font-bold text-stone-900 tracking-tight flex items-center">
+                    <span class="mr-3 text-2xl">🛒</span> Keranjang Sewa Alat
+                </h2>
+                <p class="text-xs text-stone-400 mt-1">Kelola daftar perlengkapan mendaki sebelum melakukan konfirmasi pembayaran.</p>
+            </div>
+            <span id="cartCountBadge" class="bg-[#355E3B] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">0 Alat</span>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-stone-100 shadow-xl space-y-4 mb-6">
+            
+            <div id="cartList" class="space-y-4 divide-y divide-stone-100/70">
+                
+                <div class="flex justify-between items-center py-4 skeleton-shimmer-container">
+                    <div class="flex items-center space-x-4 flex-1">
+                        <div class="w-16 h-16 rounded-xl skeleton-shimmer"></div>
+                        <div class="space-y-2 flex-1">
+                            <div class="h-4 bg-stone-200 rounded w-1/3 skeleton-shimmer"></div>
+                            <div class="h-3 bg-stone-200 rounded w-1/4 skeleton-shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="w-24 h-5 bg-stone-200 rounded skeleton-shimmer"></div>
+                </div>
+
+            </div>
+
+            <div class="bg-stone-50 p-4 rounded-xl border border-stone-100/80 mt-6 text-xs transition-all duration-300 hover:border-green-700">
+                <label for="returnDateInput" class="block font-bold text-stone-700 uppercase tracking-wider mb-2">🗓️ Tentukan Rencana Tanggal Pengembalian Alat:</label>
+                <input type="date" id="returnDateInput" class="w-full md:w-1/3 px-3 py-2 bg-white border border-stone-200 rounded-lg outline-none focus:ring-2 focus:ring-green-700 transition text-xs font-semibold">
+                <p class="text-[10px] text-stone-400 mt-1.5">* Tim Ranger Admin akan memverifikasi total tagihan sewa berdasarkan tanggal ini di MySQL.</p>
+            </div>
+
+            <div class="border-t border-stone-100 pt-6 flex justify-between items-center text-sm">
+                <span class="text-stone-500 font-medium">Estimasi Subtotal Biaya:</span>
+                <h3 id="cartTotalCostDisplay" class="text-2xl font-bold text-green-800 transition-all duration-300">Rp 0</h3>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <button onclick="window.location.href='catalog.html'" class="text-stone-600 hover:text-stone-900 font-bold text-xs flex items-center space-x-1 transition group">
+                <i class="fa-solid fa-arrow-left text-[10px] transform group-hover:-translate-x-0.5 transition-transform"></i>
+                <span>Kembali Belanja</span>
+            </button>
+            <button onclick="goToPayment()" class="btn-checkout bg-[#355E3B] hover:bg-[#2c4d31] text-white font-bold px-8 py-3.5 rounded-xl text-xs tracking-wide uppercase shadow-lg transition transform hover:-translate-y-0.5 active:scale-[0.97] flex items-center space-x-2 group">
+                <span>Lanjut ke Checkout</span>
+                <i class="fa-solid fa-arrow-right text-[10px] transform group-hover:translate-x-0.5 transition-transform"></i>
+            </button>
+        </div>
+    </main>
+
+    <div id="toastNotificationContainer"></div>
+
+    <div id="footerContainer"></div>
+
+    <script type="module">
+        import { formatIDR } from '../../public/assets/js/helpers/formatter.js';
+
+        // --- RENDER DAFTAR ITEM KERANJANG SEWA ---
+        function loadCartItems() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const listContainer = document.getElementById("cartList");
+            const badgeCount = document.getElementById("cartCountBadge");
+            
+            if (badgeCount) badgeCount.textContent = `${cart.reduce((sum, item) => sum + item.qty, 0)} Alat`;
+            if (!listContainer) return;
+
+            if (cart.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-12 text-stone-400">
+                        <p class="text-4xl mb-2">🛒</p>
+                        <p class="text-xs font-semibold">Keranjang sewa Anda kosong.</p>
+                    </div>`;
+                document.getElementById("cartTotalCostDisplay").textContent = "Rp 0";
+                return;
+            }
+
+            listContainer.innerHTML = "";
+            let subtotalCost = 0;
+
+            cart.forEach((item, index) => {
+                const itemSubtotal = item.price * item.qty;
+                subtotalCost += itemSubtotal;
+
+                // Render baris produk terstruktur (Substitusi fungsionalitas cart.js lama)
+                listContainer.innerHTML += `
+                    <div class="flex justify-between items-center py-4 text-sm transform transition duration-200 hover:scale-[1.005]">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 bg-stone-50 border border-stone-100 rounded-xl overflow-hidden">
+                                <img src="${item.image || '../../public/assets/images/default/placeholder.jpg'}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-stone-800">${item.name}</h4>
+                                <p class="text-xs text-stone-400">${formatIDR(item.price)} / hari</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <span class="font-bold text-stone-600">${item.qty}x</span>
+                            <span class="font-bold text-stone-900">${formatIDR(itemSubtotal)}</span>
+                            <button onclick="removeCartItem(${index})" class="text-red-500 hover:text-red-700 text-xl font-bold transition">&times;</button>
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById("cartTotalCostDisplay").textContent = formatIDR(subtotalCost);
+        }
+
+        window.removeCartItem = function(index) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCartItems();
+        };
+
+        // --- KONTROL TOMBOL CHECKOUT (Substitusi fungsi goToPayment() lama) ---
+        window.goToPayment = function() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const returnDate = document.getElementById("returnDateInput").value;
+
+            if (cart.length === 0) return alert("Keranjang masih kosong!");
+            if (!returnDate) return alert("Silakan tentukan rencana tanggal pengembalian barang!");
+
+            localStorage.setItem("selectedReturnDate", returnDate);
+            
+            // Pengalihan halaman mulus menuju dashboard pembayaran user
+            window.location.href = "dashboard.html";
+        };
+
+        // Jalankan render list saat DOM siap
+        document.addEventListener("DOMContentLoaded", loadCartItems);
+    </script>
+</body>
+</html>

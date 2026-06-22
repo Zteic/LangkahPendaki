@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk Akun | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./public/assets/css/global.css">
+    <link rel="stylesheet" href="./public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+    <!-- Loading Overlay System -->
+    <div id="authLoadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="w-12 h-12 border-4 border-stone-200 border-t-[#355E3B] rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-bold tracking-wider text-stone-600 uppercase animate-pulse">Memverifikasi Kredensial Supabase Cloud...</p>
+    </div>
+
+    <!-- Card Box Login Premium -->
+    <div class="bg-white p-8 md:p-10 rounded-[24px] shadow-2xl w-full max-w-md text-center border border-stone-100 transform translate-y-4 opacity-0 transition-all duration-500" id="loginCard">
+        <div class="inline-block bg-green-50 text-green-800 px-5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+            Security Gate
+        </div>
+
+        <h1 class="font-serif text-3xl font-bold text-stone-900 mb-2">Selamat Datang</h1>
+        <p class="text-xs text-stone-400 mb-8">Masukkan kredensial terdaftar untuk mengakses panel petualangan.</p>
+
+        <form id="secureLoginForm" class="space-y-4 text-left">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-regular fa-envelope"></i>
+                </span>
+                <input type="text" id="userInput" placeholder="Email atau Username" required
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" id="passInput" placeholder="Password Akun" required
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <div class="text-right">
+                <button type="button" onclick="triggerForgotPasswordModal()" class="text-xs text-stone-400 hover:text-green-700 font-semibold transition-colors duration-200">Lupa password?</button>
+            </div>
+
+            <button type="submit" class="w-full bg-[#355E3B] hover:bg-[#2c4d31] text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition transform active:scale-[0.97] mt-6 group">
+                <span>Masuk Gerbang</span>
+                <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </form>
+
+        <p class="mt-8 text-xs text-stone-500">
+            Belum tergabung sebagai member? <a href="register.html" class="text-stone-900 font-bold hover:underline">Ayo Daftar Sekarang!</a>
+        </p>
+    </div>
+
+    <!-- MODAL LUPA PASSWORD -->
+    <div id="forgotPasswordModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-sm mx-4 transform scale-95 transition-transform duration-300 border border-stone-50 text-center">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                🔑
+            </div>
+            <h3 class="font-serif text-lg font-bold text-stone-900 mb-2">Pemulihan Akun</h3>
+            <p class="text-xs text-stone-400 mb-6">Masukkan alamat email terdaftar untuk menerima token instruksi OTP.</p>
+            
+            <div class="relative text-left mb-4">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-regular fa-envelope"></i>
+                </span>
+                <input type="email" id="forgotEmailInput" placeholder="name@example.com" class="w-full pl-12 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 text-sm">
+            </div>
+
+            <div class="flex space-x-3 mt-6">
+                <button onclick="closeForgotPasswordModal()" class="w-1/2 border border-stone-200 text-stone-600 font-semibold py-2.5 rounded-xl text-xs hover:bg-stone-50 transition active:scale-95">Batal</button>
+                <button onclick="submitForgotPasswordRecovery()" class="w-1/2 bg-green-700 text-white font-semibold py-2.5 rounded-xl text-xs hover:bg-green-800 transition shadow-md active:scale-95">Kirim Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERBAIKAN UTAMA 1: CDN diletakkan di ATAS agar inisialisasi modul JavaScript di bawahnya tidak crash -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script type="module">
+        const SUPABASE_URL = "https://kimbhihdhgmrutmkrdcr.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbWJoaWhkaGdtcnV0bWtyZGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNDA4NjMsImV4cCI6MjA5NzYxNjg2M30.z32S2vJg0071OMpuo-7P0qD-4NoZMsacLv5OeXgKlVo";
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const card = document.getElementById("loginCard");
+            setTimeout(() => {
+                if (card) card.classList.remove("translate-y-4", "opacity-0");
+            }, 100);
+        });
+
+        document.getElementById('secureLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userValue = document.getElementById('userInput').value.trim();
+            const passValue = document.getElementById('passInput').value;
+            const overlay = document.getElementById("authLoadingOverlay");
+
+            overlay.classList.remove("hidden");
+            setTimeout(() => overlay.classList.add("opacity-100"), 10);
+
+            try {
+                // LANGKAH 1: Cari berdasarkan USERNAME
+                let { data: users, error: usernameError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', userValue);
+
+                // Cek jika ada error struktural/RLS saat mencari username
+                if (usernameError) {
+                    throw new Error(usernameError.message);
+                }
+
+                // LANGKAH 2: Jika tidak ditemukan, cari berdasarkan EMAIL
+                if (!users || users.length === 0) {
+                    const { data: emailUsers, error: emailError } = await supabaseClient
+                        .from('users')
+                        .select('*')
+                        .eq('email', userValue);
+                    
+                    if (emailError) {
+                        throw new Error(emailError.message);
+                    }
+                    users = emailUsers;
+                }
+
+                // VALIDASI AKHIR KETERSEDIAAN AKUN
+                if (!users || users.length === 0) {
+                    overlay.classList.add("hidden");
+                    overlay.classList.remove("opacity-100");
+                    alert("Akun tidak ditemukan di database! Periksa kembali username/email Anda.");
+                    return;
+                }
+
+                const user = users[0];
+
+                // LANGKAH 3: Validasi password
+                if (user.password_hash !== passValue && user.password !== passValue) {
+                    overlay.classList.add("hidden");
+                    overlay.classList.remove("opacity-100");
+                    alert("Password yang Anda masukkan salah!");
+                    return;
+                }
+
+                // Jika sukses, simpan session
+                localStorage.setItem("loggedInUser", user.username);
+                localStorage.setItem("userRole", user.role);
+                localStorage.setItem("userEmail", user.email);
+
+                setTimeout(() => {
+                    if (user.role === 'admin') {
+                        window.location.href = "dashboard/admin-dashboard.html";
+                    } else {
+                        window.location.href = "dashboard/user-dashboard.html";
+                    }
+                }, 1200);
+
+            } catch (err) {
+                overlay.classList.add("hidden");
+                overlay.classList.remove("opacity-100");
+                // Menampilkan error asli dari Supabase agar kita tahu penyebabnya (misal: isu RLS)
+                alert("Database Error: " + err.message);
+            }
+        });
+
+        window.triggerForgotPasswordModal = function() {
+            const modal = document.getElementById("forgotPasswordModal");
+            if (!modal) return;
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.add("opacity-100");
+                modal.querySelector('.transform')?.classList.remove('scale-95');
+                modal.querySelector('.transform')?.classList.add('scale-100');
+            }, 10);
+        };
+
+        window.closeForgotPasswordModal = function() {
+            const modal = document.getElementById("forgotPasswordModal");
+            if (!modal) return;
+            modal.classList.remove("opacity-100");
+            modal.querySelector('.transform')?.classList.remove('scale-100');
+            modal.querySelector('.transform')?.classList.add('scale-95');
+            setTimeout(() => modal.classList.add("hidden"), 300);
+        };
+
+        window.submitForgotPasswordRecovery = async function() {
+            const email = document.getElementById("forgotEmailInput").value.trim().toLowerCase();
+            
+            if(!email) {
+                alert("⚠️ Harap isi alamat email Anda!");
+                return;
+            }
+
+            // Validasi format email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("⚠️ Format email tidak valid!");
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = event.target;
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = "Memproses...";
+            submitBtn.disabled = true;
+
+            try {
+                // STEP 1: Cek apakah email terdaftar di database
+                const { data: users, error: selectError } = await supabaseClient
+                    .from('users')
+                    .select('id, username, email')
+                    .eq('email', email)
+                    .limit(1);
+
+                if (selectError) {
+                    throw new Error("Database error: " + selectError.message);
+                }
+
+                // STEP 2: Validasi ketersediaan email
+                if (!users || users.length === 0) {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    alert("❌ Email tidak ditemukan di database!\n\nPastikan Anda menggunakan email yang terdaftar atau daftar akun baru.");
+                    return;
+                }
+
+                const user = users[0];
+
+                // STEP 3: Reset password ke default 'password123'
+                const defaultPassword = 'password123';
+                const { error: updateError } = await supabaseClient
+                    .from('users')
+                    .update({ 
+                        password: defaultPassword,
+                        password_hash: defaultPassword
+                    })
+                    .eq('id', user.id);
+
+                if (updateError) {
+                    throw new Error("Gagal reset password: " + updateError.message);
+                }
+
+                // STEP 4: Berhasil - Tampilkan notifikasi
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                closeForgotPasswordModal();
+                
+                alert(`✅ Password berhasil direset!\n\n` +
+                      `📧 Email: ${email}\n` +
+                      `👤 Username: ${user.username}\n` +
+                      `🔑 Password Baru: password123\n\n` +
+                      `Silakan login menggunakan password baru ini, lalu segera ubah di pengaturan akun Anda.`);
+
+            } catch (err) {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                alert("❌ Error: " + err.message);
+                console.error("Password recovery error:", err);
+            }
+        };
+    </script>
+</body>
+</html>

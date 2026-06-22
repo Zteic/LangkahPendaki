@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangkahPendaki - Sewa Alat Outdoor & Camping Terbaik</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .navbar {
+            background-color: var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(42, 74, 47, 0.85), rgba(53, 94, 59, 0.85)), 
+                        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 120px 24px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-content .subtitle {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: rgba(255,255,255,0.95);
+        }
+        
+        .hero-content p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.8;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-section {
+            background: white;
+            padding: 64px 24px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 48px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .stat-item h3 {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-item p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .categories-section {
+            padding: 80px 24px;
+            background: var(--bg-main);
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+        
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .category-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .category-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .how-it-works {
+            padding: 80px 24px;
+            background: white;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        .step-card {
+            text-align: center;
+            padding: 24px;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+        
+        .step-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        
+        .step-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .products-section {
+            padding: 80px 24px;
+            background: var(--bg-main);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        
+        .product-content {
+            padding: 24px;
+        }
+        
+        .product-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #E8F5E9;
+            color: #27AE60;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .product-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .product-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .product-price span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .faq-section {
+            padding: 80px 24px;
+            background: white;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: var(--bg-main);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+        
+        .faq-question:hover {
+            background: #E8F5E9;
+        }
+        
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 24px 20px;
+            max-height: 200px;
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        footer {
+            background: #1F2937;
+            color: white;
+            padding: 64px 24px 24px;
+        }
+        
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            line-height: 2;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content h1 {
+                font-size: 36px;
+            }
+            
+            .hero-content .subtitle {
+                font-size: 18px;
+            }
+            
+            .stat-item h3 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌿 LangkahPendaki</a>
+            
+            <div class="nav-links">
+                <a href="#home">Beranda</a>
+                <a href="#categories">Kategori</a>
+                <a href="#how-it-works">Cara Sewa</a>
+                <a href="#faq">FAQ</a>
+            </div>
+            
+            <div class="nav-buttons">
+                <a href="../login.html" class="btn-outline">Masuk</a>
+                <a href="../register.html" class="btn-white">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section" id="home">
+        <div class="hero-content">
+            <h1>Petualangan Dimulai dari<br>Perlengkapan Terbaik</h1>
+            <p class="subtitle">Setiap Langkah Lebih Siap</p>
+            <p>Sewa alat camping, hiking, dan pendakian berkualitas dengan proses cepat, aman, dan terpercaya. Nikmati pengalaman outdoor tanpa khawatir perlengkapan.</p>
+            <div class="hero-buttons">
+                <a href="../register.html" class="btn-primary">Sewa Sekarang</a>
+                <a href="#categories" class="btn-secondary">Lihat Katalog</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>500+</h3>
+                <p>Penyewaan Berhasil</p>
+            </div>
+            <div class="stat-item">
+                <h3>100+</h3>
+                <p>Peralatan Outdoor</p>
+            </div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>Pelanggan Puas</p>
+            </div>
+            <div class="stat-item">
+                <h3>24/7</h3>
+                <p>Customer Support</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories-section" id="categories">
+        <h2 class="section-title">Kategori Perlengkapan</h2>
+        <p class="section-subtitle">Pilih kategori sesuai kebutuhan petualangan Anda</p>
+        
+        <div class="category-grid">
+            <div class="category-card" onclick="window.location.href='login.html'">
+                <div class="category-icon">⛺</div>
+                <h3>Tenda</h3>
+                <p>Tenda berkualitas untuk camping nyaman di berbagai medan</p>
+            </div>
+            <div class="category-card" onclick="window.location.href='login.html'">
+                <div class="category-icon">🎒</div>
+                <h3>Carrier</h3>
+                <p>Tas carrier ergonomis untuk perjalanan jarak jauh</p>
+            </div>
+            <div class="category-card" onclick="window.location.href='login.html'">
+                <div class="category-icon">🧥</div>
+                <h3>Jaket Gunung</h3>
+                <p>Jaket windproof dan waterproof untuk cuaca ekstrem</p>
+            </div>
+            <div class="category-card" onclick="window.location.href='login.html'">
+                <div class="category-icon">🛌</div>
+                <h3>Sleeping Bag</h3>
+                <p>Sleeping bag hangat untuk tidur nyaman di alam</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">Cara Penyewaan</h2>
+        <p class="section-subtitle">Proses sewa mudah dan cepat dalam 4 langkah</p>
+        
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Pilih Barang</h3>
+                <p>Browse katalog dan pilih peralatan yang Anda butuhkan untuk petualangan</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Masukkan Keranjang</h3>
+                <p>Tambahkan barang ke keranjang dan tentukan durasi sewa</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Upload Pembayaran</h3>
+                <p>Transfer ke rekening kami dan upload bukti pembayaran</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Ambil Peralatan</h3>
+                <p>Setelah verifikasi admin, ambil peralatan dan mulai petualangan</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section">
+        <h2 class="section-title">Produk Unggulan</h2>
+        <p class="section-subtitle">Peralatan outdoor pilihan dengan rating terbaik</p>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="images/Tenda/1.jpg" alt="Tenda Dome 2 Orang" class="product-image">
+                <div class="product-content">
+                    <span class="product-category">⛺ Tenda</span>
+                    <h3>Tenda Dome 2 Orang</h3>
+                    <p>Tenda berkualitas tinggi dengan material tahan cuaca, mudah dipasang, cocok untuk 2 orang.</p>
+                    <div class="product-footer">
+                        <div class="product-price">Rp 75.000<span>/hari</span></div>
+                        <a href="../login.html" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Sewa</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="images/Carrier/10020.jpg" alt="Backpack 40L" class="product-image">
+                <div class="product-content">
+                    <span class="product-category">🎒 Carrier</span>
+                    <h3>Backpack 40L Hiking</h3>
+                    <p>Backpack 40 liter dengan ergonomic design, cocok untuk hiking multi-hari.</p>
+                    <div class="product-footer">
+                        <div class="product-price">Rp 50.000<span>/hari</span></div>
+                        <a href="../login.html" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Sewa</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="images/Pheriperals/c.jpg" alt="Sleeping Bag" class="product-image">
+                <div class="product-content">
+                    <span class="product-category">🛌 Peralatan</span>
+                    <h3>Sleeping Bag Premium</h3>
+                    <p>Sleeping bag berkualitas dengan isolasi thermal, cocok untuk cuaca dingin.</p>
+                    <div class="product-footer">
+                        <div class="product-price">Rp 25.000<span>/hari</span></div>
+                        <a href="../login.html" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Sewa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+        <h2 class="section-title">Pertanyaan Umum</h2>
+        <p class="section-subtitle">Temukan jawaban untuk pertanyaan yang sering ditanyakan</p>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bagaimana cara menyewa peralatan?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Daftar akun, pilih barang, masukkan ke keranjang, upload bukti transfer, tunggu verifikasi admin, lalu ambil peralatan di toko kami.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Berapa lama proses verifikasi pembayaran?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Verifikasi pembayaran biasanya memakan waktu 1-3 jam pada jam kerja. Anda akan mendapat notifikasi setelah pembayaran diverifikasi.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apakah ada denda jika terlambat mengembalikan?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Ya, denda keterlambatan adalah 100% dari harga sewa per hari. Pastikan mengembalikan tepat waktu untuk menghindari biaya tambahan.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apakah peralatan sudah termasuk asuransi?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Semua peralatan sudah termasuk asuransi dasar. Namun penyewa tetap bertanggung jawab atas kerusakan akibat kelalaian.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Apakah bisa membatalkan pesanan?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Pembatalan bisa dilakukan sebelum pembayaran diverifikasi. Setelah diverifikasi, pembatalan tidak dapat dilakukan.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🌿 LangkahPendaki</h3>
+                <p>Setiap Langkah Lebih Siap</p>
+                <p style="margin-top: 16px;">Penyewaan alat outdoor berkualitas dengan harga terjangkau untuk petualangan Anda.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Navigasi</h3>
+                <p><a href="#home">Beranda</a></p>
+                <p><a href="#categories">Kategori</a></p>
+                <p><a href="#how-it-works">Cara Sewa</a></p>
+                <p><a href="#faq">FAQ</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Layanan</h3>
+                <p><a href="../register.html">Daftar Akun</a></p>
+                <p><a href="../login.html">Login</a></p>
+                <p>Tracking Pesanan</p>
+                <p>Bantuan Customer Service</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Kontak</h3>
+                <p>📍 Jl. Pendaki No. 1, Jakarta</p>
+                <p>📞 +62 812-3456-7890</p>
+                <p>✉️ info@langkahpendaki.com</p>
+                <p>🕐 Senin - Minggu: 08:00 - 20:00</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; 2026 LangkahPendaki. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('.faq-question').addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.product-card, .category-card, .step-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

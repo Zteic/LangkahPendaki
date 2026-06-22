@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Member Center | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .fade-in-smooth { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-shimmer {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: shimmerLinear 1.5s infinite linear;
+        }
+        @keyframes shimmerLinear {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .fade-out-smooth {
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .pace-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #355E3B, #10b981);
+            z-index: 99999;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        .segment-view-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .segment-view-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-[#F7F8F5] text-[#2C3639] antialiased text-sm">
+
+    <div id="userDashboardTopPaceProgressBarLine" class="pace-progress-bar opacity-0"></div>
+
+    <nav id="dynamicUserNavbar" class="fixed top-0 inset-x-0 h-20 bg-transparent text-white border-b border-white/10 z-50 transition-all duration-300 ease-in-out flex items-center px-4 md:px-8 justify-between font-semibold select-none text-xs">
+        <div class="flex items-center gap-2">
+            <span class="text-xl animate-pulse">🌿</span>
+            <div class="font-bold text-white text-base transition-colors duration-300" id="userNavbarBrandingLogoText">Langkah<span class="text-emerald-400" id="userNavbarBrandingSubLogoText">Pendaki</span></div>
+        </div>
+        <div class="flex items-center gap-5">
+            <div class="relative inline-block text-left" id="userNotificationCenterDropdownWrapper">
+                <button onclick="toggleUserNotificationCenterDropdownMenu()" class="w-9 h-9 bg-white/10 border border-white/10 text-white rounded-xl flex items-center justify-center relative transition transform active:scale-95 focus:outline-none cursor-pointer" id="userNavbarNotificationBellButton">
+                    <i class="fa-regular fa-bell text-sm"></i>
+                    <span id="userNotificationBadgeCountLabel" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-black w-4.5 h-4.5 flex items-center justify-center rounded-full border border-white">0</span>
+                </button>
+                <div id="userNotificationDropdownMenuWrapper" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-stone-200/80 z-[9999] overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-top-right">
+                    <div class="bg-stone-50/80 px-4 py-2 border-b border-stone-100 flex justify-between items-center font-bold">
+                        <span class="text-xs text-stone-700">Pusat Informasi Pemberitahuan</span>
+                        <span class="text-[8px] uppercase tracking-wider bg-green-100 border border-green-200 text-green-700 px-1.5 py-0.2 rounded font-black">Live Stream</span>
+                    </div>
+                    <div id="userNotificationListItemsInjectionContainer" class="divide-y divide-stone-100 max-h-64 overflow-y-auto text-stone-800 font-medium text-[11px]"></div>
+                </div>
+            </div>
+            <div class="w-px h-4 bg-white/20 mx-1 transition-colors duration-300" id="userNavbarVerticalDividerLine"></div>
+            <button onclick="window.location.href='../auth/login.html'" class="text-stone-300 hover:text-red-400 font-bold transition duration-200 cursor-pointer" id="userNavbarLogoutButtonHook">Keluar Toko</button>
+        </div>
+    </nav>
+
+    <main class="max-w-[1280px] mx-auto px-4 md:px-6 pt-24 pb-12">
+        
+        <div id="userDashboardGlobalSkeletonShimmerScreen" class="w-full space-y-6 fixed inset-x-4 md:inset-x-6 max-w-[1280px] mx-auto pt-0 z-40 bg-[#F7F8F5] pointer-events-none transition-all duration-300">
+            <div class="w-full h-36 bg-white rounded-3xl p-6 border border-stone-200/40 flex justify-between items-center">
+                <div class="flex items-center gap-4 w-1/2">
+                    <div class="w-16 h-16 rounded-2xl animate-shimmer shrink-0"></div>
+                    <div class="space-y-2 flex-1">
+                        <div class="h-4 rounded animate-shimmer w-1/3"></div>
+                        <div class="h-6 rounded animate-shimmer w-3/4"></div>
+                        <div class="h-3 rounded animate-shimmer w-1/2"></div>
+                    </div>
+                </div>
+                <div class="flex gap-2 w-1/3 justify-end"><div class="w-24 h-12 rounded-2xl animate-shimmer"></div><div class="w-20 h-12 rounded-2xl animate-shimmer"></div></div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/40 h-24 flex flex-col justify-between"><div class="flex justify-between"><div class="h-3 animate-shimmer w-1/2 rounded"></div><div class="w-6 h-6 animate-shimmer rounded-lg"></div></div><div class="h-6 animate-shimmer w-1/3 rounded"></div></div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/40 h-24 flex flex-col justify-between"><div class="flex justify-between"><div class="h-3 animate-shimmer w-1/2 rounded"></div><div class="w-6 h-6 animate-shimmer rounded-lg"></div></div><div class="h-6 animate-shimmer w-2/3 rounded"></div></div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/40 h-24 flex flex-col justify-between"><div class="flex justify-between"><div class="h-3 animate-shimmer w-1/2 rounded"></div><div class="w-6 h-6 animate-shimmer rounded-lg"></div></div><div class="h-6 animate-shimmer w-1/4 rounded"></div></div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/40 h-24 flex flex-col justify-between"><div class="flex justify-between"><div class="h-3 animate-shimmer w-1/2 rounded"></div><div class="w-6 h-6 animate-shimmer rounded-lg"></div></div><div class="h-6 animate-shimmer w-1/2 rounded"></div></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"><div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-stone-200/40 h-44 animate-shimmer"></div><div class="bg-white p-5 rounded-2xl border border-stone-200/40 h-44 animate-shimmer"></div></div>
+        </div>
+
+        <section class="w-full bg-gradient-to-br from-[#2C3639] to-[#1E2527] rounded-3xl p-6 md:p-8 text-white shadow-xl mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden group border border-stone-800 fade-in-smooth" id="userPersonalHeroSection">
+            <div class="absolute inset-0 opacity-15 pointer-events-none mix-blend-overlay bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200');"></div>
+            <div class="absolute -right-20 -bottom-20 w-64 h-48 bg-[#355E3B]/30 rounded-full blur-3xl transition-all duration-500 group-hover:bg-[#355E3B]/40"></div>
+            <div class="relative z-10 flex items-center gap-4 md:gap-5 text-left">
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-tr from-[#355E3B] to-emerald-500 p-0.5 shadow-xl shrink-0 group-hover:scale-105 transition duration-300">
+                    <img id="userHeroAvatarImage" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="w-full h-full object-cover rounded-2xl border border-black/10" alt="Avatar">
+                </div>
+                <div class="space-y-1">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-[10px] uppercase tracking-wider font-extrabold text-stone-300">
+                        <i class="fa-solid fa-shield-halved text-[#D4A017]"></i> Account Status: <span id="userHeroStatusText" class="text-green-400">Active</span>
+                    </div>
+                    <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">Halo, <span id="userHeroNameText" class="text-white/95">Rivaldi 👋</span></h2>
+                    <p class="text-xs text-stone-300 font-medium font-sans">Siap untuk petualangan menembus batas berikutnya?</p>
+                </div>
+            </div>
+            <div class="relative z-10 flex items-center gap-4 flex-wrap self-end md:self-center">
+                <div class="bg-black/30 border border-white/5 rounded-2xl px-4 py-3 text-left min-w-[110px] shadow-inner">
+                    <span class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Membership</span>
+                    <span id="userHeroMembershipBadge" class="text-xs font-black text-[#D4A017] uppercase tracking-wide flex items-center gap-1 mt-0.5"><i class="fa-solid fa-crown"></i> Gold Member</span>
+                </div>
+                <div class="bg-black/30 border border-white/5 rounded-2xl px-4 py-3 text-left min-w-[100px] shadow-inner">
+                    <span class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Total Sewa</span>
+                    <span id="userHeroTotalRentText" class="text-sm font-mono font-black text-white block mt-0.5">0 <span class="text-[10px] font-sans text-stone-400 font-normal">Trip</span></span>
+                </div>
+                <div class="bg-black/30 border border-white/5 rounded-2xl px-4 py-3 text-left min-w-[110px] shadow-inner cursor-pointer hover:bg-black/50 hover:border-purple-900/30 transition-all duration-200" onclick="window.bypassRouteSegmentNavigateTransitionHub('reward')">
+                    <span class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Poin Reward <i class="fa-solid fa-square-arrow-up-right text-[8px] text-purple-400"></i></span>
+                    <span id="userHeroPointsText" class="text-sm font-mono font-black text-emerald-400 block mt-0.5"><i class="fa-solid fa-star text-[11px] text-[#D4A017]"></i> 0 <span class="text-[10px] font-sans text-stone-400 font-normal">Pts</span></span>
+                </div>
+            </div>
+        </section>
+
+        <div id="userDashboardSegmentWorkspaceView" class="segment-view-active space-y-6 w-full">
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left text-xs font-semibold select-none" id="userActivityCentralMetricsGrid">
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                    <div class="flex justify-between items-center mb-2"><span class="text-stone-400 uppercase tracking-wider text-[10px]">Pesanan Aktif</span><div class="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-[11px] group-hover:bg-amber-500 group-hover:text-stone-950 transition-colors duration-300"><i class="fa-solid fa-clock-rotate-left"></i></div></div>
+                    <div class="text-2xl font-black text-stone-800 tracking-tight" id="user-kpi-active-orders">0</div>
+                    <p class="text-[9px] text-stone-400 font-medium mt-1">Dalam siklus sewa lapangan</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                    <div class="flex justify-between items-center mb-2"><span class="text-stone-400 uppercase tracking-wider text-[10px]">Total Pengeluaran</span><div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-[11px] group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300"><i class="fa-solid fa-wallet"></i></div></div>
+                    <div class="text-2xl font-black text-stone-800 tracking-tight" id="user-kpi-total-expenses">Rp 0</div>
+                    <p class="text-[9px] text-stone-400 font-medium mt-1">Investasi sewa logistik gunung</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-stone-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                    <div class="flex justify-between items-center mb-2"><span class="text-stone-400 uppercase tracking-wider text-[10px]">Total Penyewaan</span><div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-[11px] group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300"><i class="fa-solid fa-mountain text-[10px]"></i></div></div>
+                    <div class="text-2xl font-black text-stone-800 tracking-tight" id="user-kpi-total-rentals">0</div>
+                    <p class="text-[9px] text-stone-400 font-medium mt-1">Transaksi sukses diselesaikan</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-stone-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                    <div class="flex justify-between items-center mb-2"><span class="text-stone-400 uppercase tracking-wider text-[10px]">Poin Reward</span><div class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-[11px] group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300"><i class="fa-solid fa-star text-[10px]"></i></div></div>
+                    <div class="text-2xl font-black text-[#355E3B] tracking-tight" id="user-kpi-reward-points">0</div>
+                    <p class="text-[9px] text-stone-400 font-medium mt-1">Loyalty poin siap tukar voucher</p>
+                </div>
+            </div>
+
+            <div id="userOrderLiveProgressTrackingPanel" class="w-full bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 text-left transition-all duration-300">
+                <div class="flex justify-between items-center pb-3 border-b border-stone-100 mb-5 flex-wrap gap-2">
+                    <div>
+                        <h4 class="font-serif text-sm font-bold text-stone-900 flex items-center gap-1.5"><i class="fa-solid fa-route text-[#355E3B]"></i> Live Progress Sirkulasi Alat Petualangan</h4>
+                        <p class="text-[10px] text-stone-400 font-medium font-sans mt-0.5">Pantau status kesiapan perlengkapan gunung Anda secara real-time dari MySQL.</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-stone-400 block font-bold uppercase">Nomor Invoice</span>
+                        <strong id="userProgressTrackingInvoiceLabelText" class="font-mono text-xs text-[#355E3B] font-extrabold block mt-0.5">LP-INV-NONE</strong>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-2 relative pt-2 text-center select-none" id="userProgressTrackingNodesGridWrapper">
+                    <div class="flex flex-col items-center relative group" id="progress-node-booking"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">1</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Booking</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Invoice Terbit</span></div>
+                    <div class="flex flex-col items-center relative group" id="progress-node-pembayaran"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">2</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Pembayaran</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Validasi Gateway</span></div>
+                    <div class="flex flex-col items-center relative group" id="progress-node-validasi"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">3</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Validasi Berkas</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Audit Ranger</span></div>
+                    <div class="flex flex-col items-center relative group" id="progress-node-siap"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">4</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Siap Diambil</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Rak Penyimpanan</span></div>
+                    <div class="flex flex-col items-center relative group" id="progress-node-disewa"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">5</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Sedang Disewa</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Jalur Pendakian</span></div>
+                    <div class="flex flex-col items-center relative group" id="progress-node-selesai"><div class="w-8 h-8 rounded-full bg-stone-100 text-stone-400 border border-stone-200 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300 z-10 node-circle">6</div><span class="text-[11px] text-stone-500 font-bold block mt-2 node-label">Selesai</span><span class="text-[9px] text-stone-400 font-medium block node-desc mt-0.5">Aset Kembali</span></div>
+                </div>
+            </div>
+
+            <div id="smartDashboardWorkspaceLowerRowFlex" class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 text-left items-start">
+                <div class="lg:col-span-2 space-y-6" id="userDashboardMainDynamicLeftColumnWorkspace">
+                    <div id="userActivePaymentGatewayWidgetPanel" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 text-left transition-all duration-300">
+                        <div class="flex justify-between items-start pb-3 border-b border-stone-100 mb-4 flex-wrap gap-2">
+                            <div><h4 class="font-serif text-sm font-bold text-stone-900 flex items-center gap-1.5"><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>Jendela Settle Pembayaran Invoice Instan</h4><p class="text-[10px] text-stone-400 font-medium font-sans mt-0.5">Segera lakukan pelunasan untuk mengunci ketersediaan stok perlengkapan gunung Anda.</p></div>
+                            <div class="bg-rose-50 text-rose-700 px-3 py-1.5 rounded-xl border border-rose-100 font-mono text-xs font-black flex items-center gap-1.5" id="userPaymentCountdownClockBox"><i class="fa-regular fa-hourglass-half text-[11px]"></i> <span id="paymentCountdownTimerString">00:00:00</span></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-center pt-1">
+                            <div class="bg-stone-50 border border-stone-100 p-3 rounded-2xl text-center flex flex-col items-center justify-center shadow-inner group"><div class="bg-white p-1.5 border border-stone-200 rounded-xl relative overflow-hidden"><img id="userPaymentQrisImgRenderer" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=LangkahPendaki-MockQRISInvoice1024" class="w-28 h-28 object-contain transition-transform duration-300 group-hover:scale-110" alt="QRIS"><div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none"></div></div><span class="text-[9px] font-mono font-black text-stone-400 uppercase tracking-widest mt-2 block flex items-center gap-1"><i class="fa-solid fa-qrcode text-[10px]"></i> QRIS Otomatisasi</span></div>
+                            <div class="md:col-span-2 space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div><span class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Metode Otorisasi</span><strong id="userPaymentMethodLabelText" class="text-stone-800 text-xs font-serif font-black block mt-0.5">Bank Mandiri VA</strong></div>
+                                    <div><span class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Jumlah Nominal Ditransfer</span><strong id="userPaymentTotalBillValueText" class="text-green-700 font-mono font-black text-sm block mt-0.5">Rp 450.000</strong></div>
+                                </div>
+                                <div class="space-y-1"><label class="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">Nomor Rekening Virtual Account</label><div class="flex gap-2"><input type="text" id="userPaymentVaNumberInputField" value="88321408980002" readonly class="flex-1 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-800 font-mono font-bold text-xs tracking-wider outline-none select-all shadow-inner"><button onclick="copyUserPaymentVaNumberToClipboard()" class="bg-stone-900 hover:bg-black text-white font-bold px-3.5 py-2 rounded-xl transition text-xs transform active:scale-95 flex items-center gap-1 cursor-pointer"><i class="fa-regular fa-copy"></i> Salin</button></div></div>
+                                <div class="flex items-center gap-2 pt-1"><button onclick="triggerAsynchronousLiveCheckPaymentStatus()" class="flex-1 bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 font-bold py-2.5 rounded-xl text-center text-[11px] transition active:scale-98 flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"><i class="fa-solid fa-rotate text-stone-400 animate-spin-slow"></i> Cek Status Pembayaran (Live AJAX)</button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="userPaymentProofUploadCentralPanel" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 text-left transition-all duration-300">
+                        <div class="pb-2 border-b border-stone-100 mb-3"><h4 class="font-serif text-xs font-bold text-stone-900 flex items-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up text-[#355E3B]"></i> Gateway Unggah Dokumen Bukti Transfer</h4><p class="text-[9px] text-stone-400 font-medium font-sans">Kirim struk mutasi m-banking atau kuitansi ATM untuk verifikasi manual oleh Ranger Admin.</p></div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <div id="userPaymentProofDragDropZone" class="md:col-span-2 border-2 border-dashed border-stone-300 hover:border-[#355E3B] rounded-2xl p-5 text-center transition duration-200 cursor-pointer bg-stone-50/50 flex flex-col items-center justify-center gap-1.5 text-stone-500 font-semibold text-xs select-none"><div class="w-9 h-9 rounded-xl bg-stone-100 flex items-center justify-center text-stone-400"><i class="fa-solid fa-images text-sm"></i></div><p class="text-[11px] font-bold text-stone-800">Tarik & Lepas Bukti Transfer di Sini</p><p class="text-[9px] text-stone-400 font-medium leading-normal">Klik untuk telusuri berkas dari device atau langsung Paste Gambar (Ctrl+V)</p></div>
+                            <div class="bg-stone-50 border border-stone-100 p-2.5 rounded-2xl text-center h-28 flex flex-col items-center justify-center relative overflow-hidden shadow-inner" id="userPaymentProofPreviewFrameWrapper"><div id="userPaymentProofSkeletonLoader" class="hidden absolute inset-0 bg-stone-200 flex flex-col items-center justify-center gap-1"><div class="w-full h-full bg-gradient-to-r from-stone-200 via-stone-100 to-stone-200 bg-[length:200%_100%] animate-shimmer absolute inset-0"></div><span class="text-[9px] font-bold text-stone-400 relative z-10 animate-pulse">Mentransmisi Berkas...</span></div><img id="userPaymentProofInstantImgPreview" src="" class="hidden w-full h-full object-cover rounded-xl border shadow-xs" alt="Preview"><span id="userPaymentProofNoImageTextHint" class="text-[9px] font-medium text-stone-400 block"><i class="fa-regular fa-file-image block text-base mb-1 text-stone-300 text-center"></i> Belum ada lampiran</span></div>
+                        </div>
+                        <input type="hidden" id="userPaymentProofBase64CachedValue" value="">
+                        <div class="pt-4 border-t border-stone-100 mt-4">
+                            <button onclick="window.executeConfirmPaymentOrder()" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5 active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-check-circle"></i> Konfirmasi Pembayaran & Kirim ke Supabase
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="userRentalHistoryCentralWorkspacePanel" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 text-left transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-stone-100 mb-4 w-full">
+                            <div><h4 class="font-serif text-xs font-bold text-stone-900 flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-[#355E3B]"></i> Manifes Rekap Riwayat Transaksi Trip Sewa</h4><p class="text-[9px] text-stone-400 font-medium font-sans">Daftar arsip pemakaian alat camping terekam aman di database MySQL.</p></div>
+                            <div class="flex bg-stone-100 p-0.5 border rounded-xl text-[9px] font-bold text-stone-500 select-none self-end sm:self-center" id="userHistoryStatusTabGroup">
+                                <button onclick="switchUserHistoryTabStatusFilter('Semua', this)" class="px-2.5 py-1.5 rounded-lg active bg-[#355E3B] text-white transition-all duration-200 cursor-pointer">Semua</button>
+                                <button onclick="switchUserHistoryTabStatusFilter('Berjalan', this)" class="px-2.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer">Berjalan</button>
+                                <button onclick="switchUserHistoryTabStatusFilter('Selesai', this)" class="px-2.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer">Selesai</button>
+                                <button onclick="switchUserHistoryTabStatusFilter('Dibatalkan', this)" class="px-2.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer">Batal</button>
+                            </div>
+                        </div>
+                        <div class="relative w-full mb-4"><span class="absolute inset-y-0 left-3 flex items-center text-stone-400"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></span><input type="text" id="userHistorySearchInvoiceInputField" oninput="triggerUserHistorySearchDebounce()" placeholder="Cari arsip berdasarkan nomor kuitansi invoice..." class="w-full pl-9 pr-4 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl font-semibold text-xs outline-none focus:bg-white focus:ring-1 focus:ring-[#355E3B] transition-all duration-200 placeholder-stone-400"></div>
+                        <div id="userHistoryCardsDynamicInjectionWrapper" class="space-y-3 w-full relative"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-6" id="userDashboardSideRightColumnWorkspace">
+                    <div id="userMiniCartInlineActionPanel" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 flex flex-col justify-between transition-all duration-300">
+                        <div class="flex items-center space-x-2 pb-3 border-b border-stone-100 mb-4">
+                            <span class="text-base">🛒</span>
+                            <div><h4 class="font-serif text-xs font-bold text-stone-900 tracking-tight">Ringkasan Keranjang Belanja</h4><p class="text-[9px] text-stone-400 font-medium font-sans">Daftar item siap checkout kilat.</p></div>
+                        </div>
+                        <div class="space-y-3 text-[11px] font-sans font-medium text-stone-600">
+                            <div class="flex justify-between items-center border-b border-dashed border-stone-100 pb-2"><span>Jumlah Alat Terpilih</span><strong id="miniCartTxtTotalVolume" class="text-stone-900 font-bold text-xs">0 Unit</strong></div>
+                            <div class="flex justify-between items-center border-b border-dashed border-stone-100 pb-2"><span>Estimasi Batas Kembali</span><span id="miniCartTxtReturnEstimation" class="text-stone-800 font-bold">-</span></div>
+                            <div class="flex justify-between items-center pt-1"><span class="font-bold text-stone-900 text-xs">Subtotal Sewa / Hari</span><strong id="miniCartTxtSubtotalPrice" class="text-green-700 font-mono font-black text-sm">Rp 0</strong></div>
+                        </div>
+                        <div class="pt-4 border-t border-stone-100 mt-4"><button onclick="alert('Lanjut Checkout...')" class="w-full bg-[#355E3B] hover:bg-green-800 text-white font-bold py-2.5 rounded-xl text-center text-[11px] transition active:scale-98 tracking-wide flex items-center justify-center gap-1.5 shadow-sm shadow-green-900/10 cursor-pointer"><i class="fa-solid fa-credit-card text-[10px]"></i> Lanjutkan ke Pembayaran Checkout</button></div>
+                    </div>
+
+                    <div id="userPromoVoucherCentralClaimPanel" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm p-5 flex flex-col justify-between transition-all duration-300">
+                        <div class="flex items-center space-x-2 pb-2 border-b border-stone-100 mb-3"><span class="text-base">🎟️</span><div><h4 class="font-serif text-xs font-bold text-stone-900 tracking-tight">Kupon Potongan Diskon Petualang</h4><p class="text-[9px] text-stone-400 font-medium font-sans">Makin hemat sewa logistik dengan kode promo eksklusif.</p></div></div>
+                        <div class="space-y-2 pt-1">
+                            <div class="flex gap-2"><input type="text" id="userVoucherInputField" placeholder="Ketik kode promo (e.g., PENDAKIBARU)..." class="flex-1 px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl font-mono text-xs font-bold uppercase tracking-wider outline-none focus:bg-white focus:ring-2 focus:ring-[#355E3B] focus:border-[#355E3B] transition shadow-inner placeholder-stone-400 h-[36px]"><button onclick="triggerAsynchronousApplyVoucherCode()" class="bg-[#355E3B] hover:bg-green-800 text-white font-bold px-4 py-2 rounded-xl transition text-xs transform active:scale-95 shadow-sm cursor-pointer h-[36px]">Klaim</button></div>
+                            <div id="userVoucherFeedbackStatusAlert" class="hidden rounded-xl px-3 py-2 text-[11px] font-sans font-medium transition-all duration-300"></div>
+                        </div>
+                        <div id="userVoucherCalculationMatrixWrapper" class="hidden space-y-2 pt-3 mt-3 border-t border-dashed border-stone-200 font-sans font-medium text-[11px] text-stone-600 animate-fade-in">
+                            <div class="flex justify-between items-center text-rose-600 font-bold"><span>Potongan Diskon Didapat</span><span id="voucherMatrixDiscountValueString">-Rp 0</span></div>
+                            <div class="flex justify-between items-center pt-1 border-t border-stone-100 font-sans font-black"><span class="text-stone-900 text-xs">Total Akhir Tagihan</span><span id="voucherMatrixFinalAmountValueString" class="text-green-700 font-mono text-sm">Rp 0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="userDashboardSegmentRewardCatalogView" class="segment-view-hidden space-y-4 w-full">
+            <div class="bg-white p-6 rounded-2xl border border-stone-200/60 shadow-sm text-left">
+                <div class="flex items-center gap-2 pb-3 border-b mb-4">
+                    <span class="text-xl">🎁</span>
+                    <div>
+                        <h4 class="font-serif text-sm font-bold text-stone-900">Katalog Penukaran Poin Loyalty</h4>
+                        <p class="text-[10px] text-stone-400 font-medium">Tukarkan poin petualangan Anda dengan voucher sewa gratis khusus elite member.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold">
+                    <div class="border rounded-xl p-4 bg-stone-50/50 flex justify-between items-center border-stone-200/60">
+                        <div><p class="text-stone-900 font-bold">Potongan Tarif Rp 50.000</p><span class="text-[10px] text-stone-400 font-medium font-sans">Dibutuhkan: <strong class="text-purple-700">300 Pts</strong></span></div>
+                        <button onclick="alert('Poin tidak mencukupi atau fitur sedang sinkronisasi MySQL.')" class="bg-stone-900 text-white font-bold px-3 py-1.5 rounded-xl transition text-[11px]">Tukarkan</button>
+                    </div>
+                    <div class="border rounded-xl p-4 bg-stone-50/50 flex justify-between items-center border-stone-200/60">
+                        <div><p class="text-stone-900 font-bold">Gratis Sewa Sleeping Bag 1 Trip</p><span class="text-[10px] text-stone-400 font-medium font-sans">Dibutuhkan: <strong class="text-purple-700">500 Pts</strong></span></div>
+                        <button onclick="alert('Sukses menukarkan poin reward.')" class="bg-[#355E3B] text-white font-bold px-3 py-1.5 rounded-xl transition text-[11px]">Tukarkan</button>
+                    </div>
+                </div>
+                <div class="pt-4 mt-6 border-t flex justify-end">
+                    <button onclick="window.bypassRouteSegmentNavigateTransitionHub('workspace')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl border transition text-[11px]">Kembali Ke Beranda</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="userDashboardFloatingQuickActionRow" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-2.5 opacity-0 scale-90 pointer-events-none transition-all duration-300 ease-out select-none text-xs font-semibold">
+        <button onclick="scrollKilatDirectToMiniCartPanel()" class="w-11 h-11 rounded-full bg-white text-stone-700 border border-stone-200 shadow-xl flex items-center justify-center transition-all duration-200 hover:bg-stone-50 hover:text-[#355E3B] hover:scale-105 active:scale-95 cursor-pointer relative group">
+            <i class="fa-solid fa-cart-shopping text-sm"></i>
+            <span id="userFloatingCartQtyCounterBadge" class="absolute -top-1 -right-1 bg-[#355E3B] text-white text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center rounded-full border border-white">0</span>
+            <span class="absolute right-14 bg-stone-900 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 font-sans tracking-wide shadow-xl whitespace-nowrap pointer-events-none">Lompat Ke Keranjang</span>
+        </button>
+        <button onclick="window.open('https://wa.me/6287711223344', '_blank')" class="w-11 h-11 rounded-full bg-emerald-600 text-white shadow-xl flex items-center justify-center transition-all duration-200 hover:bg-emerald-700 hover:scale-105 active:scale-95 group">
+            <i class="fa-solid fa-phone text-sm"></i>
+            <span class="absolute right-14 bg-stone-900 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 font-sans tracking-wide shadow-xl whitespace-nowrap pointer-events-none">Hubungi Ranger Admin</span>
+        </button>
+        <button onclick="scrollBypassSmoothReturnToTopWindow()" class="w-11 h-11 rounded-full bg-stone-900 text-white shadow-xl flex items-center justify-center transition-all duration-200 hover:bg-black hover:scale-105 active:scale-95 group">
+            <i class="fa-solid fa-arrow-up text-sm text-amber-400"></i>
+            <span class="absolute right-14 bg-stone-900 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 font-sans tracking-wide shadow-xl whitespace-nowrap pointer-events-none">Kembali Ke Atas</span>
+        </button>
+    </div>
+
+    <div id="userHistoryDeepDetailOverlayModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 ease-out text-xs font-semibold select-none">
+        <div class="bg-white rounded-2xl border border-stone-200 shadow-2xl max-w-xl w-full p-6 relative transform scale-95 transition-transform duration-300 ease-out space-y-4 text-left text-stone-700">
+            <button onclick="closeDeepUserHistoryDetailModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 transition text-sm active:scale-90 p-1"><i class="fa-solid fa-xmark"></i></button>
+            <div class="border-b border-stone-100 pb-3">
+                <span class="bg-stone-950 text-white px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider" id="user-history-modal-badge-status">STATUS</span>
+                <h3 class="font-serif text-base font-bold text-stone-900 mt-1 flex items-center gap-1.5">📄 Detail Invoice Rekap: <span id="user-history-modal-lbl-invoice" class="text-[#355E3B] font-mono font-bold">LP-INV-0000</span></h3>
+                <p class="text-stone-400 font-sans font-medium text-[10px] mt-0.5">ID Transaksi MySQL: <strong class="text-stone-700 font-mono" id="user-history-modal-lbl-id">#0</strong> &bull; Terbit: <span id="user-history-modal-lbl-date" class="font-bold">14 Jun 2026</span></p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
+                <div class="bg-stone-50 p-2 border border-stone-100 rounded-xl text-center flex flex-col items-center justify-center shadow-inner">
+                    <span class="text-[8px] font-bold text-stone-400 uppercase tracking-wider mb-1.5 block">Bukti Konfirmasi</span>
+                    <div class="w-full aspect-[3/4] bg-white rounded-lg border border-stone-200 overflow-hidden relative group"><img id="user-history-modal-img-proof" src="" class="w-full h-full object-cover" alt="No Proof"></div>
+                </div>
+                <div class="sm:col-span-2 space-y-3 text-left text-stone-800">
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center text-[10px] uppercase font-bold text-stone-400"><span>Manifes Item Alat Gunung</span><span class="text-stone-700 font-sans">Durasi: <strong id="user-history-modal-txt-duration" class="font-bold text-stone-900">0 Hari</strong></span></div>
+                        <div class="rounded-xl border border-stone-100 max-h-24 overflow-y-auto divide-y divide-stone-100 bg-white text-[11px]" id="user-history-modal-items-list-container"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-stone-50 p-2 rounded-xl border border-stone-100"><span class="text-[9px] text-stone-400 font-bold block uppercase">Metode Transfer</span><span id="user-history-modal-txt-method" class="font-bold text-stone-800 block mt-0.5">-</span></div>
+                        <div class="bg-stone-50 p-2 rounded-xl border border-stone-100"><span class="text-[9px] text-stone-400 font-bold block uppercase">Denda Keterlambatan</span><span id="user-history-modal-txt-fine" class="font-bold text-rose-600 block mt-0.5">Rp 0</span></div>
+                    </div>
+                    <div class="bg-stone-900 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center text-white"><span class="text-[9px] text-stone-400 font-bold uppercase">Total Nilai Pelunasan</span><strong id="user-history-modal-txt-total" class="font-mono text-xs font-black text-emerald-400">Rp 0</strong></div>
+                </div>
+            </div>
+            <div class="space-y-1.5 pt-1">
+                <h5 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider text-left flex items-center gap-1.5"><i class="fa-solid fa-timeline text-stone-400"></i> Rekam Jejak Aliran Kronologi Transaksi Lapangan</h5>
+                <div id="user-history-modal-timeline-trail-wrapper" class="space-y-2 border-l border-stone-200 pl-3 pt-0.5 text-left text-stone-500 text-[11px] font-medium relative"></div>
+            </div>
+            <div class="border-t border-stone-100 pt-3 flex justify-end gap-2">
+                <button onclick="window.print()" class="bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 font-bold px-3 py-2 rounded-xl transition text-[11px]"><i class="fa-solid fa-print"></i> Print Invoice Kuitansi</button>
+                <button onclick="closeDeepUserHistoryDetailModal()" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl border border-stone-200 transition text-[11px]">Tutup Detail</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../public/assets/js/user-core.js" type="module"></script>
+</body>
+</html>

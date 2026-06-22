@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Langkah Pendaki</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <header class="main-nav">
+        <div class="nav-container">
+            <div class="logo-area">
+                <span class="logo-leaf">🌿</span>
+                <div class="logo-text">Langkah<span>Pendaki</span></div>
+            </div>
+            
+            <nav class="nav-links">
+                <ul>
+                    <li class="menu active" data-target="dashboard">Dashboard</li>
+                    <li class="menu" data-target="inventory">Inventory</li>
+                    <li class="menu" data-target="payments">Payments</li>
+                    <li class="menu" data-target="reports">Reports</li>
+                </ul>
+            </nav>
+
+            <div class="nav-admin">
+                <button id="darkModeToggle" class="btn-icon" title="Toggle Dark Mode">
+                    <span>🌙</span>
+                </button>
+                <span class="admin-tag">Admin Ranger</span>
+                <button id="logoutBtn" class="btn-logout-top">🚪 Keluar</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        
+        <section class="section" id="dashboard" style="display:block;">
+            
+            <div class="welcome-banner">
+                <div style="flex: 1;">
+                    <h1>👋 Selamat Datang, Admin Ranger</h1>
+                    <p>Kelola inventaris, validasi pembayaran, dan pantau aktivitas penyewaan secara real-time.</p>
+                    <div style="margin-top: 12px; font-size: 14px; opacity: 0.8;" id="currentDate"></div>
+                </div>
+                <div style="font-size: 60px; opacity: 0.3;">🏔️</div>
+            </div>
+
+            <div class="cards">
+                <div class="card stat-card">
+                    <div class="stat-icon" style="background: #E8F5E9;">📦</div>
+                    <div class="stat-info">
+                        <h1 id="stat-active">0</h1>
+                        <p>Penyewaan Aktif</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon" style="background: #E3F2FD;">📊</div>
+                    <div class="stat-info">
+                        <h1 id="stat-stock">0</h1>
+                        <p>Stok Tersedia</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon" style="background: #FFF9C4;">⏳</div>
+                    <div class="stat-info">
+                        <h1 id="stat-pending">0</h1>
+                        <p>Menunggu Bayar</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon" style="background: #F3E5F5;">💰</div>
+                    <div class="stat-info">
+                        <h1 id="stat-revenue">Rp 0</h1>
+                        <p>Total Pendapatan</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 32px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 600;">🔔 Notifikasi Sistem</h3>
+                    <span class="badge badge-primary" id="totalNotifications">0</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; gap: 16px; padding: 16px; background: #F9FAFB; border-radius: 12px;">
+                        <span style="font-size: 24px;">💳</span>
+                        <div style="flex: 1;">
+                            <p style="font-size: 14px; margin-bottom: 4px;"><strong id="pendingPaymentsCount">0</strong> pembayaran menunggu verifikasi</p>
+                            <span style="font-size: 12px; color: #9CA3AF;">Baru saja</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; padding: 16px; background: #F9FAFB; border-radius: 12px;">
+                        <span style="font-size: 24px;">⚠️</span>
+                        <div style="flex: 1;">
+                            <p style="font-size: 14px; margin-bottom: 4px;"><strong id="lateRentalsCount">0</strong> penyewaan terlambat</p>
+                            <span style="font-size: 12px; color: #9CA3AF;">Hari ini</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; padding: 16px; background: #F9FAFB; border-radius: 12px;">
+                        <span style="font-size: 24px;">📦</span>
+                        <div style="flex: 1;">
+                            <p style="font-size: 14px; margin-bottom: 4px;"><strong id="lowStockCount">0</strong> barang stok hampir habis</p>
+                            <span style="font-size: 12px; color: #9CA3AF;">Perlu perhatian</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3 class="section-title">Konfirmasi Pengembalian Barang</h3>
+                <table class="nature-table">
+                    <thead>
+                        <tr>
+                            <th>Pelanggan</th>
+                            <th>Daftar Barang</th>
+                            <th>Mulai Sewa</th>
+                            <th>Batas Kembali</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentRentalsBody">
+                        <tr><td colspan="6" align="center">Memuat data penyewaan aktif...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section" id="inventory" style="display:none;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+                <div>
+                    <h2 style="font-size:26px; font-weight:700; color:var(--text-main); margin-bottom:4px;">📦 Product Management</h2>
+                    <p style="color:var(--text-muted); font-size:14px;">Kelola seluruh inventaris peralatan outdoor</p>
+                </div>
+                <button onclick="openAddItemModal()" class="btn-primary" style="padding:12px 24px; font-size:14px;">
+                    ➕ Tambah Barang
+                </button>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap:16px; margin-bottom:28px;">
+                <div class="card" style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="font-size:18px;">💰</span>
+                        <span style="font-size:13px; font-weight:600; color:#6B7280;">Nilai Inventory</span>
+                    </div>
+                    <h3 style="font-size:22px; font-weight:700; color:#059669;" id="invTotalValue">Rp 0</h3>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="font-size:18px;">📈</span>
+                        <span style="font-size:13px; font-weight:600; color:#6B7280;">Produk Termahal</span>
+                    </div>
+                    <h3 style="font-size:16px; font-weight:700; color:#1F2937;" id="invMostExpensive">-</h3>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="font-size:18px;">📦</span>
+                        <span style="font-size:13px; font-weight:600; color:#6B7280;">Stok Terbanyak</span>
+                    </div>
+                    <h3 style="font-size:16px; font-weight:700; color:#1F2937;" id="invMostStock">-</h3>
+                </div>
+            </div>
+
+            <div class="card" style="padding:24px; margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div style="position:relative; flex:1; max-width:420px;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:16px; color:#9CA3AF;">🔍</span>
+                        <input type="text" id="inventorySearch" placeholder="Cari barang atau kategori..." style="width:100%; padding:12px 44px 12px 44px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit; transition:border-color 0.3s;" oninput="filterAndRenderInventory()" onfocus="this.style.borderColor='#355E3B'" onblur="this.style.borderColor='#E5E7EB'">
+                        <button onclick="document.getElementById('inventorySearch').value=''; filterAndRenderInventory();" id="invSearchClear" style="display:none; position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; color:#9CA3AF;">✕</button>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                        <div style="display:flex; gap:4px; background:#F3F4F6; padding:4px; border-radius:10px;" id="inventoryTabs">
+                            <button class="filter-pill active" data-filter="Semua">Semua</button>
+                            <button class="filter-pill" data-filter="Tenda">Tenda</button>
+                            <button class="filter-pill" data-filter="Gear">Gear</button>
+                            <button class="filter-pill" data-filter="Carrier">Carrier</button>
+                        </div>
+                        <select id="inventorySort" style="padding:10px 14px; border:2px solid #E5E7EB; border-radius:10px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; background:white;" onchange="filterAndRenderInventory()">
+                            <option value="newest">Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                            <option value="name-az">Nama A-Z</option>
+                            <option value="name-za">Nama Z-A</option>
+                            <option value="price-high">Harga Tertinggi</option>
+                            <option value="price-low">Harga Terendah</option>
+                            <option value="stock-high">Stok Terbanyak</option>
+                            <option value="stock-low">Stok Tersedikit</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="inventoryGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap:20px;"></div>
+
+        </section>
+
+        <section class="section" id="payments" style="display:none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="section-title" style="margin-bottom: 0;">Validasi Pembayaran User</h3>
+                <button onclick="loadAdminPayments()" class="btn-primary" style="padding: 8px 16px; font-size: 13px;">
+                    🔄 Refresh Data
+                </button>
+            </div>
+            <div class="table-container card">
+                <table class="nature-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal Trx</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Bukti</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableAdmin">
+                        <tr><td colspan="5" align="center">Tidak ada transaksi yang perlu divalidasi.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section" id="reports" style="display:none;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+                <div>
+                    <h2 style="font-size:26px; font-weight:700; color:var(--text-main); margin-bottom:4px;">📊 Business Analytics</h2>
+                    <p style="color:var(--text-muted); font-size:14px;">Insight bisnis dari seluruh data penyewaan</p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <select id="reportFilterQuick" class="filter-select" style="padding:8px 14px; border:2px solid #E5E7EB; border-radius:10px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer;">
+                        <option value="all">Semua Waktu</option>
+                        <option value="today">Hari Ini</option>
+                        <option value="week">Minggu Ini</option>
+                        <option value="month">Bulan Ini</option>
+                        <option value="year">Tahun Ini</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="customDateRange" style="display:none; margin-bottom:24px;">
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <label style="font-size:13px; font-weight:600; color:var(--text-muted);">Tanggal Awal:</label>
+                    <input type="date" id="reportDateFrom" style="padding:8px 14px; border:2px solid #E5E7EB; border-radius:10px; font-size:13px; font-family:inherit;">
+                    <label style="font-size:13px; font-weight:600; color:var(--text-muted);">Tanggal Akhir:</label>
+                    <input type="date" id="reportDateTo" style="padding:8px 14px; border:2px solid #E5E7EB; border-radius:10px; font-size:13px; font-family:inherit;">
+                </div>
+            </div>
+
+            <div class="revenue-breakdown-card card" style="margin-bottom:24px; padding:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main);">💰 Ringkasan Pendapatan</h3>
+                    <span style="font-size:12px; font-weight:600; color:#10B981; background:#ECFDF5; padding:4px 12px; border-radius:20px;" id="revenueTrendBadge">↑ Trend</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+                    <div style="padding:20px; background:linear-gradient(135deg,#F0FDF4,#ECFDF5); border-radius:14px; border:1px solid #D1FAE5;">
+                        <p style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Hari Ini</p>
+                        <h3 style="font-size:24px; font-weight:700; color:#059669;" id="revenueToday">Rp 0</h3>
+                    </div>
+                    <div style="padding:20px; background:linear-gradient(135deg,#EFF6FF,#DBEAFE); border-radius:14px; border:1px solid #BFDBFE;">
+                        <p style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Minggu Ini</p>
+                        <h3 style="font-size:24px; font-weight:700; color:#2563EB;" id="revenueWeek">Rp 0</h3>
+                    </div>
+                    <div style="padding:20px; background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border-radius:14px; border:1px solid #DDD6FE;">
+                        <p style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Bulan Ini</p>
+                        <h3 style="font-size:24px; font-weight:700; color:#7C3AED;" id="revenueMonth">Rp 0</h3>
+                    </div>
+                    <div style="padding:20px; background:linear-gradient(135deg,#E8F5E9,#D1FAE5); border-radius:14px; border:1px solid #A7F3D0;">
+                        <p style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Total Keseluruhan</p>
+                        <h3 style="font-size:24px; font-weight:700; color:#059669;" id="revenueTotal">Rp 0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap:24px; margin-bottom:24px;">
+
+                <div class="card" style="padding:28px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:20px;">🏆 Barang Paling Sering Disewa</h3>
+                    <div id="topRentalItems">
+                        <div style="text-align:center; padding:30px; color:#9CA3AF;">Memuat data...</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding:28px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:20px;">👑 Customer Teraktif</h3>
+                    <div id="topCustomers">
+                        <div style="text-align:center; padding:30px; color:#9CA3AF;">Memuat data...</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card" style="padding:28px; margin-bottom:24px;">
+                <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:20px;">📊 Ringkasan Status Penyewaan</h3>
+                <div id="statusBreakdown">
+                    <div style="text-align:center; padding:30px; color:#9CA3AF;">Memuat data...</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding:24px; margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div class="search-box" style="position:relative; flex:1; max-width:400px;">
+                        <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:16px; color:#9CA3AF;">🔍</span>
+                        <input type="text" id="reportSearch" placeholder="Cari customer atau nama barang..." style="width:100%; padding:10px 40px 10px 40px; border:2px solid #E5E7EB; border-radius:10px; font-size:14px; font-family:inherit;" oninput="filterReportTable()">
+                        <button onclick="document.getElementById('reportSearch').value=''; filterReportTable();" id="reportSearchClear" style="display:none; position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; color:#9CA3AF;">✕</button>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="exportReportPDF()" class="btn-secondary" style="padding:8px 16px; font-size:13px;">
+                            <span>📄</span> Export PDF
+                        </button>
+                        <button onclick="exportReportCSV()" class="btn-secondary" style="padding:8px 16px; font-size:13px;">
+                            <span>📊</span> Export CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="padding:0; overflow:hidden;">
+                <div style="padding:24px 24px 0;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:4px;">📋 Riwayat Penyewaan</h3>
+                    <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;" id="reportDataCount">0 transaksi</p>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="nature-table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th style="padding:14px 24px; text-align:left; font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid #F3F4F6; background:#F9FAFB;">Tanggal</th>
+                                <th style="padding:14px 24px; text-align:left; font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid #F3F4F6; background:#F9FAFB;">Customer</th>
+                                <th style="padding:14px 24px; text-align:left; font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid #F3F4F6; background:#F9FAFB;">Item</th>
+                                <th style="padding:14px 24px; text-align:left; font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid #F3F4F6; background:#F9FAFB;">Total Bayar</th>
+                                <th style="padding:14px 24px; text-align:left; font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid #F3F4F6; background:#F9FAFB;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <tr><td colspan="5" style="padding:40px; text-align:center; color:#9CA3AF;">Belum ada data.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="customPopup" class="modal" style="display:none; z-index: 9999;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px; border-top: 5px solid var(--primary);">
+            <div id="popupIcon" style="font-size: 50px; margin-bottom: 15px;">🔔</div>
+            <h3 id="popupTitle" style="margin-bottom: 10px; color: var(--text-main);">Pemberitahuan</h3>
+            <p id="popupMessage" style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px; line-height: 1.5; white-space: pre-wrap;"></p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="popupBtnCancel" class="btn-return" style="display:none; padding: 10px 20px; font-weight: 600;">Batal</button>
+                <button id="popupBtnOk" class="btn-primary" style="padding: 10px 20px; width: auto; margin-top: 0;">OK Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addItemModal" class="modal" style="display:none; z-index:9998;">
+        <div class="modal-backdrop" onclick="closeAddItemModal()" style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
+        <div style="position:relative; background:white; border-radius:20px; padding:32px; max-width:560px; width:95%; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px rgba(0,0,0,0.25); z-index:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="font-size:20px; font-weight:700;">➕ Tambah Barang Baru</h2>
+                <button onclick="closeAddItemModal()" style="width:36px; height:36px; border-radius:50%; border:none; background:#F3F4F6; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center;">✕</button>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>🏷️</span> Kategori</label>
+                <select id="itemCategory" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                    <option value="Tenda">Tenda</option>
+                    <option value="Gear">Gear</option>
+                    <option value="Carrier">Carrier</option>
+                    <option value="Peripherals">Peripherals</option>
+                </select>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📦</span> Nama Barang</label>
+                <input type="text" id="itemName" placeholder="Contoh: Tenda Dome 4P" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:16px;">
+                <div>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📊</span> Stok</label>
+                    <input type="number" id="itemStock" placeholder="0" min="0" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                </div>
+                <div>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>💰</span> Harga Sewa (Rp)</label>
+                    <input type="number" id="itemPrice" placeholder="50000" min="0" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                </div>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📸</span> Foto Produk</label>
+                <div onclick="document.getElementById('itemImage').click()" style="border:2px dashed #D1D5DB; border-radius:14px; padding:28px; text-align:center; cursor:pointer; transition:all 0.3s;" onmouseover="this.style.borderColor='#355E3B'; this.style.background='#F0FDF4'" onmouseout="this.style.borderColor='#D1D5DB'; this.style.background=''" id="addItemDropZone">
+                    <input type="file" id="itemImage" accept="image/*" hidden>
+                    <div id="addImagePlaceholder">
+                        <div style="font-size:40px; margin-bottom:8px;">📷</div>
+                        <p style="font-size:14px; color:#6B7280; font-weight:500;">Drop image here</p>
+                        <p style="font-size:12px; color:#9CA3AF;">atau klik untuk memilih file</p>
+                    </div>
+                    <div id="imagePreviewContainer" style="display:none; position:relative;">
+                        <img id="imagePreview" src="" alt="Preview" style="max-width:100%; height:200px; object-fit:cover; border-radius:12px; border:1px solid #E5E7EB;">
+                        <button onclick="event.stopPropagation(); removeAddItemImage();" style="position:absolute; top:8px; right:8px; width:32px; height:32px; border-radius:50%; background:#EF4444; color:white; border:none; cursor:pointer; font-size:14px;">✕</button>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button onclick="closeAddItemModal()" style="flex:1; padding:14px; border:2px solid #E5E7EB; border-radius:12px; background:white; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;">Batal</button>
+                <button onclick="addItem()" class="btn-primary" style="flex:1; padding:14px; border:none; font-size:14px; margin-top:0;">Tambah ke Gudang</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editItemModal" class="modal" style="display:none; z-index:9998;">
+        <div class="modal-backdrop" onclick="closeEditModal()" style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
+        <div style="position:relative; background:white; border-radius:20px; padding:32px; max-width:560px; width:95%; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px rgba(0,0,0,0.25); z-index:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="font-size:20px; font-weight:700;">✏️ Edit Barang</h2>
+                <button onclick="closeEditModal()" style="width:36px; height:36px; border-radius:50%; border:none; background:#F3F4F6; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center;">✕</button>
+            </div>
+            <input type="hidden" id="editItemId">
+            <div style="margin-bottom:16px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>🏷️</span> Kategori</label>
+                <select id="editItemCategory" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                    <option value="Tenda">Tenda</option>
+                    <option value="Gear">Gear</option>
+                    <option value="Carrier">Carrier</option>
+                    <option value="Peripherals">Peripherals</option>
+                </select>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📦</span> Nama Barang</label>
+                <input type="text" id="editItemName" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:16px;">
+                <div>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📊</span> Stok</label>
+                    <input type="number" id="editItemStock" min="0" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                </div>
+                <div>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>💰</span> Harga Sewa (Rp)</label>
+                    <input type="number" id="editItemPrice" min="0" style="width:100%; padding:12px 16px; border:2px solid #E5E7EB; border-radius:12px; font-size:14px; font-family:inherit;">
+                </div>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#6B7280; margin-bottom:6px;"><span>📸</span> Foto Produk</label>
+                <div onclick="document.getElementById('editItemPhoto').click()" style="border:2px dashed #D1D5DB; border-radius:14px; padding:20px; text-align:center; cursor:pointer; transition:all 0.3s;" onmouseover="this.style.borderColor='#355E3B'" onmouseout="this.style.borderColor='#D1D5DB'">
+                    <input type="file" id="editItemPhoto" accept="image/*" hidden>
+                    <div id="editImagePreviewWrap">
+                        <p style="font-size:13px; color:#9CA3AF;">Klik untuk mengganti foto</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button onclick="closeEditModal()" style="flex:1; padding:14px; border:2px solid #E5E7EB; border-radius:12px; background:white; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;">Batal</button>
+                <button onclick="saveEditItem()" class="btn-primary" style="flex:1; padding:14px; border:none; font-size:14px; margin-top:0;">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

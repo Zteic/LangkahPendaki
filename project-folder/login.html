@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 md:p-12 rounded-3xl shadow-xl w-full max-w-md text-center border border-gray-100">
+        <div class="inline-block bg-green-100 text-green-800 px-6 py-2 rounded-2xl font-bold mb-6">
+            Masuk
+        </div>
+
+        <h1 class="text-4xl font-bold text-gray-900 mb-10">Selamat datang</h1>
+
+        <form id="loginForm" class="space-y-4">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
+                    <i class="fa-regular fa-user"></i>
+                </span>
+                <input type="text" id="userInput" placeholder="Email/Username" required
+                    class="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" id="passInput" placeholder="Password" required
+                    class="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition">
+            </div>
+
+            <div class="text-left">
+                <button type="button" onclick="openForgotModal()" class="text-sm text-gray-400 hover:text-green-600 transition">Lupa password?</button>
+            </div>
+
+            <button type="submit" 
+                class="w-full bg-[#6eff6e] hover:bg-[#5ce65c] text-gray-800 font-bold py-4 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition transform active:scale-95">
+                <span>Masuk</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p class="mt-12 text-sm text-gray-500">
+            Belum punya akun? <a href="register.html" class="text-gray-900 font-bold hover:underline">Ayo daftar jadi member!</a>
+        </p>
+    </div>
+
+    <div id="forgotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-sm w-full shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4">Reset Password</h2>
+            <p class="text-gray-500 text-sm mb-6">Masukkan Username/Email terdaftar untuk mengganti password.</p>
+            
+            <div class="space-y-4">
+                <input type="text" id="resetUser" placeholder="Username/Email" 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400">
+                <input type="password" id="newPass" placeholder="Password Baru" 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400">
+            </div>
+
+            <div class="mt-6 flex space-x-3">
+                <button onclick="closeForgotModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold">Batal</button>
+                <button onclick="processReset()" class="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIKA LOGIN ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userValue = document.getElementById('userInput').value.toLowerCase();
+            const passValue = document.getElementById('passInput').value;
+
+            // Simpan nama user ke localStorage agar dashboard bisa menampilkan nama
+            localStorage.setItem("loggedInUser", userValue);
+
+            if (userValue.includes('admin')) {
+                window.location.href = "../dashboard/admin-dashboard.html";
+            } else {
+                window.location.href = "../dashboard/user-dashboard.html";
+            }
+        });
+
+        // --- LOGIKA LUPA PASSWORD ---
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.remove('hidden');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.add('hidden');
+        }
+
+        function processReset() {
+            const userReset = document.getElementById('resetUser').value.toLowerCase();
+            const newPassword = document.getElementById('newPass').value;
+
+            if (!userReset || !newPassword) {
+                alert("Harap isi semua kolom!");
+                return;
+            }
+
+            // Catatan: Di sini diasumsikan data user tersimpan di localStorage dari register.html
+            // Jika Anda menggunakan database nyata, proses ini dilakukan via API.
+            // Untuk simulasi Langkah Pendaki:
+            
+            alert("Password untuk " + userReset + " telah diperbarui secara otomatis. Silahkan masuk.");
+            closeForgotModal();
+        }
+    </script>
+
+</body>
+</html>

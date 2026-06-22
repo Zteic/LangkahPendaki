@@ -1,0 +1,17 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Berjalan otomatis setiap hari Senin dan Kamis pukul 09:00 UTC (16:00 WIB)
+    - cron: '0 9 * * 1,4'
+  workflow_dispatch: # Memungkinkan Anda untuk menjalankan ping secara manual lewat web GitHub
+
+jobs:
+  ping_database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send API Request to Supabase
+        run: |
+          curl -X GET "https://kimbhihdhgmrutmkrdcr.supabase.co/rest/v1/inventory?select=*" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Member | Langkah Pendaki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./public/assets/css/global.css">
+    <link rel="stylesheet" href="./public/assets/css/user.css">
+</head>
+<body class="bg-[#F7F8F5] min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+    <div id="registerLoadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="w-12 h-12 border-4 border-stone-200 border-t-[#355E3B] rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-bold tracking-wider text-stone-600 uppercase animate-pulse">Menginjeksikan Akun Baru ke Supabase...</p>
+    </div>
+
+    <div class="bg-white p-8 md:p-10 rounded-[24px] shadow-2xl w-full max-w-md text-center border border-stone-100 transform translate-y-4 opacity-0 transition-all duration-500" id="registerCard">
+        <h1 class="font-serif text-3xl font-bold text-stone-900 mb-2">Registrasi Member</h1>
+        <p class="text-xs text-stone-400 mb-8">Bergabunglah bersama komunitas ranger pendaki LangkahPendaki.</p>
+
+        <form id="secureRegisterForm" class="space-y-4 text-left">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-regular fa-user"></i>
+                </span>
+                <input type="text" id="regUsername" placeholder="Username Unik" required 
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-regular fa-envelope"></i>
+                </span>
+                <input type="email" id="regEmail" placeholder="Alamat Email Aktif" required 
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" id="regPassword" placeholder="Password Kriptografi Kuat" required 
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <div class="px-1">
+                <div class="h-1 w-full bg-stone-100 rounded-full overflow-hidden mb-1">
+                    <div id="strengthBar" class="h-full w-0 bg-red-500 transition-all duration-300"></div>
+                </div>
+                <span id="strengthText" class="text-[10px] text-stone-400 font-semibold uppercase tracking-wider">Kekuatan Sandi: Terlalu Pendek</span>
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-stone-400">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
+                <input type="password" id="regConfirmPassword" placeholder="Konfirmasi Ulang Password" required 
+                    class="w-full pl-12 pr-4 py-3.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700 focus:bg-white transition text-sm">
+            </div>
+
+            <button type="submit" class="w-full bg-[#355E3B] hover:bg-[#2c4d31] text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition transform active:scale-[0.97] mt-6 group">
+                <span>Daftar Akun</span>
+                <i class="fa-solid fa-user-plus text-xs transform group-hover:scale-110 transition-transform"></i>
+            </button>
+        </form>
+
+        <p class="mt-8 text-xs text-stone-500">
+            Sudah terdaftar sebelumnya? <a href="login.html" class="text-stone-900 font-bold hover:underline">Silakan Login!</a>
+        </p>
+    </div>
+
+    <script type="module">
+        const SUPABASE_URL = "https://kimbhihdhgmrutmkrdcr.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbWJoaWhkaGdtcnV0bWtyZGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNDA4NjMsImV4cCI6MjA5NzYxNjg2M30.z32S2vJg0071OMpuo-7P0qD-4NoZMsacLv5OeXgKlVo";
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const card = document.getElementById("registerCard");
+            setTimeout(() => {
+                card.classList.remove("translate-y-4", "opacity-0");
+            }, 100);
+        });
+
+        const passwordInput = document.getElementById("regPassword");
+        const strengthBar = document.getElementById("strengthBar");
+        const strengthText = document.getElementById("strengthText");
+
+        passwordInput.addEventListener("input", (e) => {
+            const val = e.target.value;
+            if (val.length === 0) {
+                strengthBar.style.width = "0%";
+                strengthText.textContent = "Kekuatan Sandi: Terlalu Pendek";
+                strengthText.className = "text-[10px] text-stone-400 font-semibold uppercase tracking-wider";
+                return;
+            }
+
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            if (score <= 1) {
+                strengthBar.style.width = "25%";
+                strengthBar.className = "h-full bg-red-500 transition-all duration-300";
+                strengthText.textContent = "Kekuatan Sandi: Lemah";
+                strengthText.className = "text-[10px] text-red-500 font-semibold uppercase tracking-wider";
+            } else if (score === 2 || score === 3) {
+                strengthBar.style.width = "60%";
+                strengthBar.className = "h-full bg-amber-500 transition-all duration-300";
+                strengthText.textContent = "Kekuatan Sandi: Sedang";
+                strengthText.className = "text-[10px] text-amber-500 font-semibold uppercase tracking-wider";
+            } else if (score === 4) {
+                strengthBar.style.width = "100%";
+                strengthBar.className = "h-full bg-green-600 transition-all duration-300";
+                strengthText.textContent = "Kekuatan Sandi: Sangat Kuat";
+                strengthText.className = "text-[10px] text-green-600 font-semibold uppercase tracking-wider";
+            }
+        });
+
+        document.getElementById('secureRegisterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+            const overlay = document.getElementById("registerLoadingOverlay");
+
+            if(pass !== confirm) {
+                alert("Kesalahan! Konfirmasi verifikasi password tidak cocok.");
+                return;
+            }
+
+            if(pass.length < 6) {
+                alert("Password minimal 6 karakter!");
+                return;
+            }
+
+            overlay.classList.remove("hidden");
+            setTimeout(() => overlay.classList.add("opacity-100"), 10);
+
+            try {
+                // VALIDASI: Cek duplikasi username
+                const { data: existingUsername, error: usernameCheckError } = await supabaseClient
+                    .from('users')
+                    .select('username')
+                    .eq('username', username)
+                    .limit(1);
+
+                if (usernameCheckError) {
+                    throw new Error("Database error saat cek username: " + usernameCheckError.message);
+                }
+
+                if (existingUsername && existingUsername.length > 0) {
+                    overlay.classList.add("hidden");
+                    overlay.classList.remove("opacity-100");
+                    alert("❌ Username sudah terdaftar! Gunakan username lain.");
+                    return;
+                }
+
+                // VALIDASI: Cek duplikasi email
+                const { data: existingEmail, error: emailCheckError } = await supabaseClient
+                    .from('users')
+                    .select('email')
+                    .eq('email', email)
+                    .limit(1);
+
+                if (emailCheckError) {
+                    throw new Error("Database error saat cek email: " + emailCheckError.message);
+                }
+
+                if (existingEmail && existingEmail.length > 0) {
+                    overlay.classList.add("hidden");
+                    overlay.classList.remove("opacity-100");
+                    alert("❌ Email sudah terdaftar! Gunakan email lain atau login.");
+                    return;
+                }
+
+                // INSERT data user baru ke Supabase
+                const { data: newUser, error: insertError } = await supabaseClient.from('users').insert([{
+                    username: username,
+                    email: email,
+                    password: pass,
+                    password_hash: pass,
+                    role: 'customer',
+                    created_at: new Date().toISOString()
+                }]).select();
+
+                if (insertError) {
+                    throw new Error("Gagal menyimpan data: " + insertError.message);
+                }
+
+                setTimeout(() => {
+                    alert("✅ Registrasi sukses! Akun Anda berhasil disinkronkan ke Supabase Cloud.");
+                    window.location.href = "login.html";
+                }, 1200);
+
+            } catch (err) {
+                overlay.classList.add("hidden");
+                overlay.classList.remove("opacity-100");
+                alert("❌ Error: " + err.message);
+                console.error("Registration error:", err);
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>

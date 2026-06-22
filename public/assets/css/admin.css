@@ -1,0 +1,452 @@
+/* ==========================================================================
+   PUSAТ GAYA VISUAL ADMIN DASHBOARD PREMIUM - LANGKAH PENDAKI 2026
+   [OPTIMIZED: SAAS COMPACT COMPRESSION IN 100% ZOOM VIEW]
+   ========================================================================== */
+
+:root {
+    --primary: #355E3B;       /* Forest Green */
+    --primary-dark: #2c4d31;  /* Deep Forest */
+    --secondary: #8DAA91;     /* Sage Green */
+    --bg-light: #F7F8F5;      /* Soft Cream Base */
+    --text-main: #2C3639;     /* Dark Slate Charcoal */
+    --text-muted: #6D7E7E;    /* Soft Muted Teal Grey */
+    --white: #ffffff;
+    --accent: #D4A017;        /* Premium Mustard Gold */
+    --sidebar-bg: #2C3639;    /* Dark Earth Charcoal */
+    --danger: #E53935;        /* Crimson Red */
+    --success: #4CAF50;       /* Nature Emerald Success */
+    --warning: #FFB300;       /* Warm Amber Warning */
+    
+    /* Standarisasi Kurva & Transisi 2026 */
+    --radius-lg: 12px;        /* Diturunkan dari 16px agar seimbang dengan visual kompak */
+    --radius-md: 8px;         /* Diturunkan dari 10px */
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    background: var(--bg-light);
+    color: var(--text-main);
+    overflow-x: hidden;
+    line-height: 1.4;
+    
+    /* Global Native Downscaling: Menghasilkan visual 67% yang padat pada Zoom 100% */
+    zoom: 0.88; 
+    -moz-transform: scale(0.88);
+    -moz-transform-origin: top center;
+}
+
+/* --- SMART TOP NAVBAR STYLING --- */
+.main-nav {
+    background: var(--sidebar-bg);
+    color: var(--white);
+    height: 46px; /* Diturunkan dari 52px agar bar atas sangat ramping */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    transition: var(--transition-smooth);
+}
+
+.nav-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 24px; /* Dipadatkan dari 40px */
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; /* Dikecilkan dari 22px agar proporsional */
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.logo-text span { color: var(--secondary); }
+
+/* Navigasi Link Menu dengan Animated Underline */
+.nav-links ul {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+}
+
+.nav-links li {
+    padding: 6px 14px; /* Diperketat dari 10px 20px */
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: #BDC3C7;
+    transition: var(--transition-smooth);
+    font-size: 12.5px; /* Diturunkan dari 14px */
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-links li:hover {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-links li.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 3px 8px rgba(53, 94, 59, 0.2);
+}
+
+.nav-admin {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-tag {
+    font-size: 11px; /* Diturunkan dari 13px */
+    color: #BDC3C7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-logout-top {
+    background: transparent;
+    color: #BDC3C7;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 5px 14px; /* Dipadatkan dari 8px 18px */
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 11.5px;
+    transition: var(--transition-smooth);
+}
+
+.btn-logout-top:hover {
+    background: var(--danger);
+    color: var(--white);
+    border-color: var(--danger);
+    box-shadow: 0 3px 8px rgba(229, 57, 53, 0.15);
+}
+
+/* --- LAYOUT WRAPPER & REVEAL ANIMATION --- */
+.content-wrapper {
+    max-width: 1440px; 
+    margin: 14px auto; /* Jarak vertikal diperketat dari 20px ke 14px */
+    padding: 0 16px;   /* Margin luar horizontal dirampingkan agar ruang grid luas */
+}
+
+.content-header {
+    margin-bottom: 16px; /* Dipangkas dari 30px */
+}
+
+.content-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; /* Diturunkan dari 30px */
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+/* --- PREMIUM STATISTIC CARDS --- */
+.cards {
+    display: flex;
+    gap: 16px; /* Merapat dari 24px */
+    margin-bottom: 20px; /* Dipotong dari 35px */
+}
+
+.card {
+    background: var(--white);
+    padding: 16px; /* Padding dalam menyusut dari 25px ke 16px */
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 16px rgba(44, 54, 57, 0.015);
+    border-top: 3.5px solid var(--primary);
+    flex: 1;
+    transition: var(--transition-smooth);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(44, 54, 57, 0.04);
+}
+
+.card h1 {
+    font-size: 24px; /* Dioptimasi dari 32px agar tidak berukuran raksasa */
+    color: var(--text-main);
+    margin-bottom: 2px;
+    font-weight: 700;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 10px; /* Lebih micro dari 11px */
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* --- INVENTORY CONTAINER GRID & MODULAR FORM --- */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr; /* Dirampingkan dari 400px */
+    gap: 20px;
+}
+
+.table-container {
+    background: var(--white);
+    padding: 18px; /* Mengompres kerapatan box dari 30px ke 18px */
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 16px rgba(44, 54, 57, 0.015);
+    margin-bottom: 16px;
+}
+
+/* --- NATURE MODERN TABLE DESIGN --- */
+.nature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.nature-table th {
+    background: #F9FBFA;
+    padding: 10px 12px; /* Diperketat drastis dari 16px */
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #F1F3F2;
+}
+
+.nature-table td {
+    padding: 10px 12px; /* Diperketat drastis dari 16px */
+    border-bottom: 1px solid #F1F3F2;
+    font-size: 12.5px; /* Huruf isi tabel diturunkan dari 14px */
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.nature-table tr {
+    transition: var(--transition-smooth);
+}
+
+.nature-table tr:hover {
+    background-color: #FAFAFA;
+}
+
+.item-thumbnail {
+    width: 40px; /* Diperkecil dari 52px */
+    height: 40px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 1px solid #E0E4E2;
+    background: var(--bg-light);
+    transition: var(--transition-smooth);
+}
+
+.item-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+/* --- BADGES & CONTROLS --- */
+.cat-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #E8F5E9;
+    color: #27AE60;
+    text-transform: uppercase;
+}
+
+.cat-badge.tenda { background: #E8F4FD; color: #3498DB; }
+.cat-badge.carrier { background: #FDEBD0; color: #E67E22; }
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.active { background: #E8F4FD; color: #3498DB; border: 1px solid #D6EAF8; }
+.status-badge.success { background: #E8F5E9; color: #27AE60; border: 1px solid #D4EFDF; }
+.status-badge.red { background: #FDEDEC; color: var(--danger); border: 1px solid #FADBD8; }
+
+/* --- INPUTS & CONTROLS FORM --- */
+.input-group {
+    margin-bottom: 12px; /* Diperketat dari 18px */
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+.input-group input, .custom-select {
+    width: 100%;
+    padding: 8px 12px; /* Dirampingkan dari 12px 14px */
+    border: 1px solid #E0E4E2;
+    border-radius: var(--radius-md);
+    outline: none;
+    font-size: 13px;
+    background: var(--white);
+    transition: var(--transition-smooth);
+}
+
+.input-group input:focus, .custom-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(53, 94, 59, 0.08);
+}
+
+/* --- BUTTONS PREMIUM --- */
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px; /* Ramping dari 14px 24px */
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: var(--transition-smooth);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(53, 94, 59, 0.15);
+}
+
+.btn-return {
+    background: var(--sidebar-bg);
+    color: var(--white);
+    border: none;
+    padding: 6px 14px; /* Ramping dari 10px 18px */
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+}
+
+.btn-return:hover {
+    background: #000;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+/* --- SHIMMER SKELETON LOADER ANIMATION (LANGKAH 12 UTILITY CSS) --- */
+.shimmer-card {
+    position: relative;
+    overflow: hidden;
+    background: #ECEFF1;
+}
+
+.shimmer-card::after {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.4) 60%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.5s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
+}
+
+/* --- SECTION ENTER TRANSITION --- */
+.section {
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- PREMIUM MODERN DIALOG POP-UP MODAL --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 54, 57, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--white);
+    width: 90%;
+    max-width: 380px;
+    border-radius: var(--radius-lg);
+    padding: 24px; /* Dipadatkan dari 35px */
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    transform: scale(0.96);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+/* --- REVISI PROMPT GAP ADJUSTMENT MATRIX --- */
+.mb-8, .mb-10 {
+    margin-bottom: 0.85rem !important;
+}
+.p-6 {
+    padding: 1rem !important;
+}
+
+/* --- ENGINE SKELETON SHIMMER LOADER WAVE (LANGKAH 12 REVISI LENGKAH) --- */
+@keyframes shimmerWave {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg, #ecefec 25%, #f4f6f4 50%, #ecefec 75%);
+    background-size: 200% 100%;
+    animation: shimmerWave 1.5s infinite linear;
+}
+
+.fade-in-smooth {
+    animation: fadeInSmoothly 0.4s ease-out forwards;
+}
+
+@keyframes fadeInSmoothly {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
