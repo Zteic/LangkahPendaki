@@ -43,14 +43,29 @@
             </div>
 
             <div class="bg-stone-50 p-4 rounded-xl border border-stone-100/80 mt-6 text-xs transition-all duration-300 hover:border-green-700">
-                <label for="returnDateInput" class="block font-bold text-stone-700 uppercase tracking-wider mb-2">🗓️ Tentukan Rencana Tanggal Pengembalian Alat:</label>
-                <input type="date" id="returnDateInput" class="w-full md:w-1/3 px-3 py-2 bg-white border border-stone-200 rounded-lg outline-none focus:ring-2 focus:ring-green-700 transition text-xs font-semibold">
-                <p class="text-[10px] text-stone-400 mt-1.5">* Tim Ranger Admin akan memverifikasi total tagihan sewa berdasarkan tanggal ini di MySQL.</p>
+                <label class="block font-bold text-stone-700 uppercase tracking-wider mb-3">🗓️ Tentukan Durasi Sewa:</label>
+                <div class="flex gap-3 flex-wrap">
+                    <div class="flex-1 min-w-[140px]">
+                        <label class="text-[10px] text-stone-500 font-semibold block mb-1">Tanggal Mulai</label>
+                        <input type="date" id="startDateInput" class="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg outline-none focus:ring-2 focus:ring-green-700 transition text-xs font-semibold">
+                    </div>
+                    <div class="flex-1 min-w-[140px]">
+                        <label class="text-[10px] text-stone-500 font-semibold block mb-1">Tanggal Kembali</label>
+                        <input type="date" id="returnDateInput" class="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg outline-none focus:ring-2 focus:ring-green-700 transition text-xs font-semibold">
+                    </div>
+                </div>
+                <div id="durationInfo" class="mt-2 text-[11px] text-emerald-700 font-bold hidden">⏱️ Durasi: <span id="durationDays">0</span> Hari</div>
             </div>
 
-            <div class="border-t border-stone-100 pt-6 flex justify-between items-center text-sm">
-                <span class="text-stone-500 font-medium">Estimasi Subtotal Biaya:</span>
-                <h3 id="cartTotalCostDisplay" class="text-2xl font-bold text-green-800 transition-all duration-300">Rp 0</h3>
+            <div class="border-t border-stone-100 pt-4 flex justify-between items-center text-sm">
+                <div>
+                    <span class="text-stone-500 font-medium">Subtotal/hari:</span>
+                    <h3 id="cartSubtotalDisplay" class="text-lg font-bold text-stone-700">Rp 0</h3>
+                </div>
+                <div class="text-right">
+                    <span class="text-stone-500 font-medium">Total Sewa:</span>
+                    <h3 id="cartTotalCostDisplay" class="text-2xl font-bold text-green-800 transition-all duration-300">Rp 0</h3>
+                </div>
             </div>
         </div>
 
@@ -72,6 +87,38 @@
 
     <script type="module">
         import { formatIDR } from '../../public/assets/js/helpers/formatter.js';
+
+        function getDurationDays() {
+            const start = document.getElementById("startDateInput")?.value;
+            const end = document.getElementById("returnDateInput")?.value;
+            if (start && end) {
+                const s = new Date(start);
+                const e = new Date(end);
+                return Math.max(1, Math.ceil((e - s) / (1000 * 60 * 60 * 24)));
+            }
+            return 1;
+        }
+
+        function updateTotalDisplay() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const duration = getDurationDays();
+            const perDayTotal = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+            const totalWithDuration = perDayTotal * duration;
+
+            const subEl = document.getElementById("cartSubtotalDisplay");
+            const totalEl = document.getElementById("cartTotalCostDisplay");
+            const durInfo = document.getElementById("durationInfo");
+            const durDays = document.getElementById("durationDays");
+
+            if (subEl) subEl.textContent = formatIDR(perDayTotal);
+            if (totalEl) totalEl.textContent = formatIDR(totalWithDuration);
+            if (durDays) durDays.textContent = duration;
+            if (durInfo) {
+                const start = document.getElementById("startDateInput")?.value;
+                const end = document.getElementById("returnDateInput")?.value;
+                durInfo.classList.toggle("hidden", !(start && end));
+            }
+        }
 
         // --- RENDER DAFTAR ITEM KERANJANG SEWA ---
         function loadCartItems() {
@@ -99,7 +146,6 @@
                 const itemSubtotal = item.price * item.qty;
                 subtotalCost += itemSubtotal;
 
-                // Render baris produk terstruktur (Substitusi fungsionalitas cart.js lama)
                 listContainer.innerHTML += `
                     <div class="flex justify-between items-center py-4 text-sm transform transition duration-200 hover:scale-[1.005]">
                         <div class="flex items-center space-x-4">
@@ -113,13 +159,13 @@
                         </div>
                         <div class="flex items-center space-x-6">
                             <span class="font-bold text-stone-600">${item.qty}x</span>
-                            <span class="font-bold text-stone-900">${formatIDR(itemSubtotal)}</span>
+                            <span class="font-bold text-stone-900">${formatIDR(itemSubtotal)}<span class="text-[10px] text-stone-400 font-normal">/hari</span></span>
                             <button onclick="removeCartItem(${index})" class="text-red-500 hover:text-red-700 text-xl font-bold transition">&times;</button>
                         </div>
                     </div>`;
             });
 
-            document.getElementById("cartTotalCostDisplay").textContent = formatIDR(subtotalCost);
+            updateTotalDisplay();
         }
 
         window.removeCartItem = function(index) {
@@ -129,22 +175,46 @@
             loadCartItems();
         };
 
-        // --- KONTROL TOMBOL CHECKOUT (Substitusi fungsi goToPayment() lama) ---
+        // --- KONTROL TOMBOL CHECKOUT ---
         window.goToPayment = function() {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const startDate = document.getElementById("startDateInput").value;
             const returnDate = document.getElementById("returnDateInput").value;
 
             if (cart.length === 0) return alert("Keranjang masih kosong!");
-            if (!returnDate) return alert("Silakan tentukan rencana tanggal pengembalian barang!");
+            if (!startDate) return alert("Silakan pilih tanggal mulai sewa!");
+            if (!returnDate) return alert("Silakan tentukan tanggal pengembalian barang!");
+            if (new Date(returnDate) <= new Date(startDate)) return alert("Tanggal kembali harus setelah tanggal mulai!");
 
+            localStorage.setItem("selectedStartDate", startDate);
             localStorage.setItem("selectedReturnDate", returnDate);
             
-            // Pengalihan halaman mulus menuju dashboard pembayaran user
             window.location.href = "dashboard.html";
         };
 
-        // Jalankan render list saat DOM siap
-        document.addEventListener("DOMContentLoaded", loadCartItems);
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split('T')[0];
+            const startInput = document.getElementById("startDateInput");
+            const returnInput = document.getElementById("returnDateInput");
+            
+            if (startInput) {
+                startInput.min = today;
+                startInput.value = today;
+                startInput.addEventListener("change", () => {
+                    if (returnInput) returnInput.min = startInput.value;
+                    if (returnInput && returnInput.value && returnInput.value <= startInput.value) {
+                        returnInput.value = "";
+                    }
+                    updateTotalDisplay();
+                });
+            }
+            if (returnInput) {
+                returnInput.min = today;
+                returnInput.addEventListener("change", updateTotalDisplay);
+            }
+            
+            loadCartItems();
+        });
     </script>
 </body>
 </html>

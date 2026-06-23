@@ -505,8 +505,12 @@ window.executeConfirmPaymentOrder = async function() {
         return;
     }
 
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const todayDate = new Date().toISOString().split('T')[0];
+    const startDate = localStorage.getItem("selectedStartDate") || new Date().toISOString().split('T')[0];
+    const returnDateObj = returnDate ? new Date(returnDate) : new Date();
+    const startDateObj = new Date(startDate);
+    const duration = Math.max(1, Math.ceil((returnDateObj - startDateObj) / (1000 * 60 * 60 * 24)));
+    const perDayTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const totalAmount = perDayTotal * duration;
 
     try {
         const { createClient } = supabase;
@@ -518,10 +522,11 @@ window.executeConfirmPaymentOrder = async function() {
             amount: totalAmount,
             status: "Menunggu Verifikasi",
             payment_proof: paymentProofBase64,
-            date: todayDate,
-            rental_date: todayDate,
-            startDate: todayDate,
+            date: new Date().toISOString().split('T')[0],
+            rental_date: startDate,
+            startDate: startDate,
             expectedReturnDate: returnDate,
+            duration_days: duration,
             items: JSON.stringify(cart)
         };
 

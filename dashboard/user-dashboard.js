@@ -210,6 +210,32 @@ window.addToCartFromModal = function() {
     }
 };
 
+function getDurationDaysFromInputs() {
+    const start = document.getElementById("startDateInput")?.value;
+    const end = document.getElementById("returnDateInput")?.value;
+    if (start && end) {
+        const s = new Date(start);
+        const e = new Date(end);
+        return Math.max(1, Math.ceil((e - s) / (1000 * 60 * 60 * 24)));
+    }
+    return 1;
+}
+
+function getDurationDaysFromStorage() {
+    const start = localStorage.getItem("selectedStartDate");
+    const end = localStorage.getItem("selectedReturnDate");
+    if (start && end) {
+        const s = new Date(start);
+        const e = new Date(end);
+        return Math.max(1, Math.ceil((e - s) / (1000 * 60 * 60 * 24)));
+    }
+    return 1;
+}
+
+function calcCartTotal(cart, durationDays) {
+    return cart.reduce((t, item) => t + (item.price * item.qty), 0) * durationDays;
+}
+
 window.addToCart = async function(id) {
     const product = allInventoryData.find(i => i.id === id);
     if (product && product.stock > 0) {
@@ -218,7 +244,7 @@ window.addToCart = async function(id) {
         if (existIdx !== -1) {
             cart[existIdx].qty += 1;
         } else {
-            cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+            cart.push({ id: product.id, name: product.name, price: product.price, qty: 1, image: product.image, category: product.category });
         }
         localStorage.setItem("cart", JSON.stringify(cart));
         updateCartUI();
@@ -298,11 +324,16 @@ function updateCartUI() {
             </div>`;
     }).join("");
 
-    const subtotal = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+    const perDaySubtotal = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+    const duration = getDurationDaysFromInputs();
+    const totalWithDuration = perDaySubtotal * duration;
+
     const subEl = document.getElementById("cartSubtotal");
     const totalEl = document.getElementById("cartTotalDisplay");
-    if (subEl) subEl.textContent = "Rp " + subtotal.toLocaleString();
-    if (totalEl) totalEl.textContent = "Rp " + subtotal.toLocaleString();
+    const durInfoEl = document.getElementById("cartDurationInfo");
+    if (subEl) subEl.textContent = "Rp " + perDaySubtotal.toLocaleString() + "/hari";
+    if (durInfoEl) durInfoEl.textContent = "× " + duration + " hari";
+    if (totalEl) totalEl.textContent = "Rp " + totalWithDuration.toLocaleString();
     updateDuration();
 }
 
@@ -379,8 +410,23 @@ window.proceedToCheckout = function() {
 document.addEventListener("DOMContentLoaded", async () => {
     const startInput = document.getElementById("startDateInput");
     const returnInput = document.getElementById("returnDateInput");
-    if (startInput) startInput.addEventListener("change", () => { updateDuration(); updateCartUI(); });
-    if (returnInput) returnInput.addEventListener("change", () => { updateDuration(); updateCartUI(); });
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (startInput) {
+        startInput.min = todayStr;
+        startInput.value = todayStr;
+        startInput.addEventListener("change", () => {
+            if (returnInput) returnInput.min = startInput.value;
+            if (returnInput && returnInput.value && returnInput.value <= startInput.value) {
+                returnInput.value = "";
+            }
+            updateDuration(); updateCartUI();
+        });
+    }
+    if (returnInput) {
+        returnInput.min = todayStr;
+        returnInput.addEventListener("change", () => { updateDuration(); updateCartUI(); });
+    }
 
     const userTabBtns = document.querySelectorAll("#userInventoryTabs .tab-btn");
     userTabBtns.forEach(btn => {
@@ -426,7 +472,9 @@ function updatePaymentDetails() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const returnDate = localStorage.getItem("selectedReturnDate");
     const transaction = JSON.parse(localStorage.getItem("currentTransaction"));
-    const total = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+    const duration = getDurationDaysFromStorage();
+    const perDaySubtotal = cart.reduce((t, item) => t + (item.price * item.qty), 0);
+    const total = perDaySubtotal * duration;
 
     const grid = document.getElementById("paymentGrid");
     const empty = document.getElementById("paymentEmptyState");
@@ -471,16 +519,23 @@ function updatePaymentDetails() {
 
     const orderItems = document.getElementById("paymentOrderItems");
     if (orderItems && cart.length > 0) {
-        orderItems.innerHTML = cart.map(item => `
+        orderItems.innerHTML = cart.map(item => {
+            const itemDaily = item.price * item.qty;
+            const itemTotal = itemDaily * duration;
+            return `
             <div style="display:flex; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid #F3F4F6;">
                 <div style="width:44px; height:44px; border-radius:12px; background:#F0FDF4; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">📦</div>
                 <div style="flex:1;">
                     <p style="font-size:14px; font-weight:600; color:#1F2937; margin-bottom:2px;">${item.name}</p>
                     <p style="font-size:12px; color:#9CA3AF;">${item.qty}x × Rp ${item.price.toLocaleString()}/hari</p>
                 </div>
-                <span style="font-size:14px; font-weight:700; color:#1F2937;">Rp ${(item.price * item.qty).toLocaleString()}</span>
-            </div>
-        `).join("");
+                <span style="font-size:14px; font-weight:700; color:#1F2937;">Rp ${itemDaily.toLocaleString()}/hari</span>
+            </div>`;
+        }).join("") + `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; background:#F0FDF4; margin-top:4px; border-radius:8px; padding:12px 16px;">
+                <span style="font-size:13px; font-weight:600; color:#065F46;">Total × ${duration} hari sewa</span>
+                <span style="font-size:16px; font-weight:800; color:#065F46;">Rp ${total.toLocaleString()}</span>
+            </div>`;
     }
 
     const today = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
@@ -499,7 +554,8 @@ function updatePaymentDetails() {
         }
     }
 
-    if (document.getElementById("paymentSubtotal")) document.getElementById("paymentSubtotal").textContent = "Rp " + total.toLocaleString();
+    if (document.getElementById("paymentSubtotal")) document.getElementById("paymentSubtotal").textContent = "Rp " + perDaySubtotal.toLocaleString();
+    if (document.getElementById("paymentDurationSub")) document.getElementById("paymentDurationSub").textContent = duration + " Hari";
     if (document.getElementById("paymentGrandTotal")) document.getElementById("paymentGrandTotal").textContent = "Rp " + total.toLocaleString();
 
     renderPaymentProgress(transaction);
@@ -598,13 +654,16 @@ if (proofInput) {
                 const imageData = event.target.result;
                 const cart = JSON.parse(localStorage.getItem("cart")) || [];
                 const returnDate = localStorage.getItem("selectedReturnDate");
+                const startDate = localStorage.getItem("selectedStartDate");
+                const dur = getDurationDaysFromStorage();
+                const totalAmount = calcCartTotal(cart, dur);
                 
                 const transaction = {
                     username_customer: localStorage.getItem("loggedInUser") || "Customer",
-                    amount: cart.reduce((t, item) => t + (item.price * item.qty), 0),
+                    amount: totalAmount,
                     status: "Menunggu Verifikasi",
                     payment_proof: imageData,
-                    rental_date: new Date().toISOString(),
+                    rental_date: startDate || new Date().toISOString(),
                     return_date: returnDate,
                     items: cart,
                     date: new Date().toLocaleDateString('id-ID'),
